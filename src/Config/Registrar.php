@@ -24,10 +24,10 @@ class Registrar
         return [
             'plugins' => [
                 'customer_logged_in' => [function ($str, array $params = []) {
-                    return Services::authenticationCustomer()->check() ? $str : '';
+                    return Services::authenticationcustomer()->check() ? $str : '';
                 }],
                 'customer_logged_out' => [function ($str, array $params = []) {
-                    return !Services::authenticationCustomer()->check() ? $str : '';
+                    return !Services::authenticationcustomer()->check() ? $str : '';
                 }],
             ]
         ];

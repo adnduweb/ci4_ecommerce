@@ -27,14 +27,14 @@ class PermissionFilter implements FilterInterface
 	public function before(RequestInterface $request, $params = null)
 	{
 		if (!function_exists('customer_logged_in')) {
-			helper('authCustomer');
+			helper('Authcustomer');
 		}
 
 		if (empty($params)) {
 			return;
 		}
 
-		$authenticate = Services::authenticationCustomer();
+		$authenticate = Services::authenticationcustomer();
 
 		// if no user is logged in then send to the login form
 		if (!$authenticate->check()) {
@@ -42,7 +42,7 @@ class PermissionFilter implements FilterInterface
 			return redirect('login');
 		}
 
-		$authorize = Services::authorizationCustomer();
+		$authorize = Services::authorizationcustomer();
 		$result = true;
 
 		// Check each requested permission

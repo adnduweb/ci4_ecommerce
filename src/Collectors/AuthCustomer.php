@@ -5,7 +5,7 @@ namespace Adnduweb\Ci4_ecommerce\Collectors;
 /**
  * Auth collector
  */
-class AuthCustomer extends \CodeIgniter\Debug\Toolbar\Collectors\BaseCollector
+class Authcustomer extends \CodeIgniter\Debug\Toolbar\Collectors\BaseCollector
 {
 
 	/**
@@ -85,7 +85,7 @@ class AuthCustomer extends \CodeIgniter\Debug\Toolbar\Collectors\BaseCollector
 	 */
 	public function display(): string
 	{
-		$authenticateCustomer = service('authenticationCustomer');
+		$authenticateCustomer = service('authenticationcustomer');
 		// print_r($authenticateCustomer);
 		// exit;
 		if ($authenticateCustomer->isLoggedIn()) {
@@ -132,7 +132,7 @@ class AuthCustomer extends \CodeIgniter\Debug\Toolbar\Collectors\BaseCollector
 	 */
 	public function getBadgeValue(): int
 	{
-		$authenticateCustomer = service('authenticationCustomer');
+		$authenticateCustomer = service('authenticationcustomer');
 		// print_r($authenticateCustomer);
 		// exit;
 		if ($authenticateCustomer->isLoggedIn()) {

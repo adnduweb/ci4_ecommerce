@@ -32,16 +32,16 @@ class Services extends CoreServices
         return new \Adnduweb\Ci4_ecommerce\Cart();
     }
 
-    public static function authenticationCustomer(string $lib = 'local', UuidModel $customerModel = null, Model $loginModel = null, bool $getShared = true)
+    public static function authenticationcustomer(string $lib = 'local', UuidModel $customerModel = null, Model $loginModel = null, bool $getShared = true)
     {
         if ($getShared) {
-            return self::getSharedInstance('authenticationCustomer', $lib, $customerModel, $loginModel);
+            return self::getSharedInstance('authenticationcustomer', $lib, $customerModel, $loginModel);
         }
 
         // config() checks first in app/Config
-        $config = config('AuthCustomer');
+        $config = config('Authcustomer');
 
-        $class = $config->authenticationCustomerLibs[$lib];
+        $class = $config->authenticationcustomerLibs[$lib];
 
         $instance = new $class($config);
 
@@ -58,10 +58,10 @@ class Services extends CoreServices
             ->setLoginModel($loginModel);
     }
 
-    public static function authorizationCustomer(Model $groupModel = null, Model $permissionModel = null, UuidModel $customerModel = null, bool $getShared = true)
+    public static function authorizationcustomer(Model $groupModel = null, Model $permissionModel = null, UuidModel $customerModel = null, bool $getShared = true)
     {
         if ($getShared) {
-            return self::getSharedInstance('authorizationCustomer', $groupModel, $permissionModel, $customerModel);
+            return self::getSharedInstance('authorizationcustomer', $groupModel, $permissionModel, $customerModel);
         }
 
         if (is_null($groupModel)) {
@@ -96,7 +96,7 @@ class Services extends CoreServices
         }
 
         if (empty($config)) {
-            $config = config(AuthCustomer::class);
+            $config = config(Authcustomer::class);
         }
 
         return new PasswordValidator($config);
@@ -117,7 +117,7 @@ class Services extends CoreServices
         }
 
         if (empty($config)) {
-            $config = config(AuthCustomer::class);
+            $config = config(Authcustomer::class);
         }
 
         return new CustomerActivator($config);
@@ -138,7 +138,7 @@ class Services extends CoreServices
         }
 
         if (empty($config)) {
-            $config = config(AuthCustomer::class);
+            $config = config(Authcustomer::class);
         }
 
         return new CustomerResetter($config);

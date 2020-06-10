@@ -2,7 +2,7 @@
 
 namespace Adnduweb\Ci4_ecommerce\Authentication\Resetters;
 
-use Adnduweb\Ci4_ecommerce\Config\AuthCustomer;
+use Adnduweb\Ci4_ecommerce\Config\Authcustomer;
 use Adnduweb\Ci4_ecommerce\Entities\Customer;
 
 class CustomerResetter
@@ -14,7 +14,7 @@ class CustomerResetter
 
     protected $error;
 
-    public function __construct(AuthCustomer $config)
+    public function __construct(Authcustomer $config)
     {
         $this->config = $config;
     }

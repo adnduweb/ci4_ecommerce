@@ -27,7 +27,7 @@ class LoginCustomerFilter implements FilterInterface
 	{
 
 		if (!function_exists('customer_logged_in')) {
-			helper('authCustomer');
+			helper('Authcustomer');
 		}
 
 		$current = (string) current_url(true)
@@ -41,7 +41,7 @@ class LoginCustomerFilter implements FilterInterface
 		}
 
 		// if no user is logged in then send to the login form
-		$authenticate = Services::authenticationCustomer();
+		$authenticate = Services::authenticationcustomer();
 		if (!$authenticate->check()) {
 			session()->set('redirect_url', current_url());
 			return redirect('signin');

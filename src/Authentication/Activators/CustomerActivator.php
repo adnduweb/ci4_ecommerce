@@ -2,26 +2,26 @@
 
 namespace Adnduweb\Ci4_ecommerce\Authentication\Activators;
 
-use Adnduweb\Ci4_ecommerce\Config\AuthCustomer;
+use Adnduweb\Ci4_ecommerce\Config\Authcustomer;
 use Adnduweb\Ci4_ecommerce\Entities\customer;
 
 class customerActivator
 {
     /**
-     * @var AuthCustomer
+     * @var Authcustomer
      */
     protected $config;
 
     protected $error;
 
-    public function __construct(AuthCustomer $config)
+    public function __construct(Authcustomer $config)
     {
         $this->config = $config;
     }
 
     /**
      * Sends activation message to the customer via specified class
-     * in `$requireActivation` setting in Config\AuthCustomer.php.
+     * in `$requireActivation` setting in Config\Authcustomer.php.
      *
      * @param Customer $customer
      *

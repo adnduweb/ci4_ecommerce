@@ -99,7 +99,7 @@ class LoginModel extends Model
      */
     public function purgeOldRememberTokens()
     {
-        $config = config('AuthCustomer');
+        $config = config('Authcustomer');
 
         if (!$config->allowRemembering) {
             return;

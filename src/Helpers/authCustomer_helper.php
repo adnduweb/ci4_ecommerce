@@ -10,7 +10,7 @@ if (!function_exists('customer_logged_in')) {
 	 */
 	function customer_logged_in()
 	{
-		return Services::authenticationCustomer()->check();
+		return Services::authenticationcustomer()->check();
 	}
 }
 
@@ -22,7 +22,7 @@ if (!function_exists('customer')) {
 	 */
 	function customer()
 	{
-		$authenticate = Services::authenticationCustomer();
+		$authenticate = Services::authenticationcustomer();
 		$authenticate->check();
 		return $authenticate->customer();
 	}
@@ -36,7 +36,7 @@ if (!function_exists('customer_id')) {
 	 */
 	function customer_id()
 	{
-		$authenticate = Services::authenticationCustomer();
+		$authenticate = Services::authenticationcustomer();
 		$authenticate->check();
 		return $authenticate->id();
 	}
@@ -60,8 +60,8 @@ if (!function_exists('in_groups')) {
 	 */
 	function in_groups($groups): bool
 	{
-		$authenticate = Services::authenticationCustomer();
-		$authorize    = Services::authorizationCustomer();
+		$authenticate = Services::authenticationcustomer();
+		$authorize    = Services::authorizationcustomer();
 
 		if ($authenticate->check()) {
 			return $authorize->inGroup($groups, $authenticate->id());
@@ -82,8 +82,8 @@ if (!function_exists('has_permission')) {
 	 */
 	function has_permission($permission): bool
 	{
-		$authenticate = Services::authenticationCustomer();
-		$authorize    = Services::authorizationCustomer();
+		$authenticate = Services::authenticationcustomer();
+		$authorize    = Services::authorizationcustomer();
 
 		if ($authenticate->check()) {
 			return $authorize->hasPermission($permission, $authenticate->id()) ?? false;

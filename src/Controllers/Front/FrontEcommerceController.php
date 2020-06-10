@@ -17,9 +17,9 @@ class FrontEcommerceController extends \App\Controllers\Front\FrontController
 
     public $name_module = 'ecommerce';
 
-    protected $authCustomer;
+    protected $Authcustomer;
     /**
-     * @var authCustomer
+     * @var Authcustomer
      */
     protected $config;
 
@@ -32,10 +32,10 @@ class FrontEcommerceController extends \App\Controllers\Front\FrontController
     public function __construct()
     {
         parent::__construct();
-        $this->config = config('AuthCustomer');
-        $this->authCustomer = service('authenticationCustomer');
+        $this->config = config('Authcustomer');
+        $this->Authcustomer = service('authenticationcustomer');
 
-        if ($this->authCustomer->check() == false) {
+        if ($this->Authcustomer->check() == false) {
             return redirect()->to('signin');
         }
     }

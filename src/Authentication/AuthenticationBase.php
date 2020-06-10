@@ -34,7 +34,7 @@ class AuthenticationBase
     protected $error;
 
     /**
-     * @var \Config\AuthCustomer
+     * @var \Config\Authcustomer
      */
     protected $config;
 

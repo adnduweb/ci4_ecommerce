@@ -2,7 +2,7 @@
 
 namespace Adnduweb\Ci4_ecommerce\Authentication\Passwords;
 
-use Adnduweb\Ci4_ecommerce\Config\AuthCustomer;
+use Adnduweb\Ci4_ecommerce\Config\Authcustomer;
 use Adnduweb\Ci4_ecommerce\Entities\Customer;
 use Adnduweb\Ci4_ecommerce\Exceptions\AuthException;
 
@@ -17,7 +17,7 @@ class PasswordValidator
 
     protected $suggestion;
 
-    public function __construct(AuthCustomer $config)
+    public function __construct(Authcustomer $config)
     {
         $this->config = $config;
     }

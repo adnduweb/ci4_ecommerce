@@ -22,7 +22,7 @@ class FrontAuthenticationController extends \App\Controllers\Front\FrontControll
 
     protected $auth;
     /**
-     * @var authCustomer
+     * @var Authcustomer
      */
     protected $config;
 
@@ -35,8 +35,8 @@ class FrontAuthenticationController extends \App\Controllers\Front\FrontControll
     public function __construct()
     {
         parent::__construct();
-        $this->config = config('AuthCustomer');
-        $this->authCustomer = service('authenticationCustomer');
+        $this->config = config('Authcustomer');
+        $this->Authcustomer = service('authenticationcustomer');
     }
     public function index()
     {
@@ -48,8 +48,8 @@ class FrontAuthenticationController extends \App\Controllers\Front\FrontControll
      */
     public function logout()
     {
-        if ($this->authCustomer->check()) {
-            $this->authCustomer->logout();
+        if ($this->Authcustomer->check()) {
+            $this->Authcustomer->logout();
         }
         return redirect()->to('/');
     }
@@ -60,7 +60,7 @@ class FrontAuthenticationController extends \App\Controllers\Front\FrontControll
         // $client = new \Google_Client();
         // print_r($client);
 
-        if ($this->authCustomer->check()) {
+        if ($this->Authcustomer->check()) {
             $redirectURL = session('redirect_url') ?? '/';
             unset($_SESSION['redirect_url']);
 
@@ -126,8 +126,8 @@ class FrontAuthenticationController extends \App\Controllers\Front\FrontControll
         $type = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
 
         // Try to log them in...
-        if (!$this->authCustomer->attempt([$type => $login, 'password' => $password], $remember)) {
-            return redirect()->back()->withInput()->with('error', $this->authCustomer->error() ?? lang('Authcustomercustomercustomer.badAttempt'));
+        if (!$this->Authcustomer->attempt([$type => $login, 'password' => $password], $remember)) {
+            return redirect()->back()->withInput()->with('error', $this->Authcustomer->error() ?? lang('Authcustomercustomercustomer.badAttempt'));
         }
 
         $redirectURL = session('redirect_url') ?? '/my-account';
@@ -159,7 +159,7 @@ class FrontAuthenticationController extends \App\Controllers\Front\FrontControll
         $this->data['config'] = $this->config;
 
         // check if already logged in.
-        if ($this->authCustomer->check()) {
+        if ($this->Authcustomer->check()) {
             return redirect()->back();
         }
 
@@ -279,13 +279,13 @@ class FrontAuthenticationController extends \App\Controllers\Front\FrontControll
 
         if (isset($_GET['code'])) {
 
-            // Authenticate user with google 
+            // Authenticate user with google
             if ($this->google->getAuthenticate()) {
 
-                // Get user info from google 
+                // Get user info from google
                 $gpInfo = $this->google->getUserInfo();
 
-                // Preparing data for database insertion 
+                // Preparing data for database insertion
                 $userData['oauth_provider'] = 'google';
                 $userData['oauth_uid']         = $gpInfo['id'];
                 $userData['first_name']     = $gpInfo['given_name'];
@@ -295,52 +295,52 @@ class FrontAuthenticationController extends \App\Controllers\Front\FrontControll
                 $userData['locale']         = !empty($gpInfo['locale']) ? $gpInfo['locale'] : '';
                 $userData['picture']         = !empty($gpInfo['picture']) ? $gpInfo['picture'] : '';
 
-                // Insert or update user data to the database 
+                // Insert or update user data to the database
                 $userID = $this->user->checkUser($userData);
 
-                // Store the status and user profile info into session 
+                // Store the status and user profile info into session
                 $this->session->set_userdata('loggedIn', true);
                 $this->session->set_userdata('userData', $userData);
 
-                // Redirect to profile page 
+                // Redirect to profile page
                 redirect('user_authentication/profile/');
             }
         }
 
-        // Google authentication url 
+        // Google authentication url
         $data['loginURL'] = $this->google->loginURL();
 
-        // Load google login view 
+        // Load google login view
         $this->load->view('user_authentication/index', $data);
     }
 
     public function profileGoogle()
     {
-        // Redirect to login page if the user not logged in 
+        // Redirect to login page if the user not logged in
         if (!$this->session->userdata('loggedIn')) {
             redirect('/user_authentication/');
         }
 
-        // Get user info from session 
+        // Get user info from session
         $data['userData'] = $this->session->userdata('userData');
 
-        // Load user profile view 
+        // Load user profile view
         $this->load->view('user_authentication/profile', $data);
     }
 
     public function logoutSocial()
     {
-        // Reset OAuth access token 
+        // Reset OAuth access token
         $this->google->revokeToken();
 
-        // Remove token and user data from the session 
+        // Remove token and user data from the session
         $this->session->unset_userdata('loggedIn');
         $this->session->unset_userdata('userData');
 
-        // Destroy entire session data 
+        // Destroy entire session data
         $this->session->sess_destroy();
 
-        // Redirect to login page 
+        // Redirect to login page
         redirect('/user_authentication/');
     }
 }

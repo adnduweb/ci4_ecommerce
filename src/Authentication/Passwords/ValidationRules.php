@@ -92,7 +92,7 @@ class ValidationRules
      */
     protected function prepareValidFields(): array
     {
-        $config = config('AuthCustomer');
+        $config = config('Authcustomer');
         $fields = array_merge($config->validFields, $config->personalFields);
         $fields[] = 'password';
 

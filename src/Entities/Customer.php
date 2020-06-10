@@ -64,7 +64,7 @@ class Customer extends UuidEntity
      */
     public function setPassword(string $password)
     {
-        $config = config('AuthCustomer');
+        $config = config('Authcustomer');
 
         if (
             (defined('PASSWORD_ARGON2I') && $config->hashAlgorithm == PASSWORD_ARGON2I)
@@ -131,7 +131,7 @@ class Customer extends UuidEntity
     public function generateResetHash()
     {
         $this->attributes['reset_hash'] = bin2hex(random_bytes(16));
-        $this->attributes['reset_expires'] = date('Y-m-d H:i:s', time() + config('AuthCustomer')->resetTime);
+        $this->attributes['reset_expires'] = date('Y-m-d H:i:s', time() + config('Authcustomer')->resetTime);
 
         return $this;
     }

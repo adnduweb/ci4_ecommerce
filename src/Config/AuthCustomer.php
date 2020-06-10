@@ -6,7 +6,7 @@ use CodeIgniter\Config\BaseConfig;
 use Adnduweb\Ci4_ecommerce\Authentication\LocalAuthenticator;
 
 
-class AuthCustomer extends BaseConfig
+class Authcustomer extends BaseConfig
 {
 
     //--------------------------------------------------------------------
@@ -22,7 +22,7 @@ class AuthCustomer extends BaseConfig
     // Libraries
     //--------------------------------------------------------------------
 
-    public $authenticationCustomerLibs = [
+    public $authenticationcustomerLibs = [
         'local' => LocalAuthenticator::class
     ];
 

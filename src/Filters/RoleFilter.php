@@ -27,7 +27,7 @@ class RoleFilter implements FilterInterface
 	public function before(RequestInterface $request, $params = null)
 	{
 		if (!function_exists('customer_logged_in')) {
-			helper('authCustomer');
+			helper('Authcustomer');
 		}
 
 		if (empty($params)) {
@@ -42,7 +42,7 @@ class RoleFilter implements FilterInterface
 			return redirect('login');
 		}
 
-		$authorize = Services::authorizationCustomer();
+		$authorize = Services::authorizationcustomer();
 
 		// Check each requested permission
 		foreach ($params as $group) {

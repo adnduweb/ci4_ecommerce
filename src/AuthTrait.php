@@ -158,7 +158,7 @@ trait AuthTrait
         /*
          * Authentication
          */
-        $this->authenticate = Services::authenticationCustomer($this->authenticationLib);
+        $this->authenticate = Services::authenticationcustomer($this->authenticationLib);
 
         // Try to log us in automatically.
         $this->authenticate->check();
