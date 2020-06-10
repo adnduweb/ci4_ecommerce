@@ -1,4 +1,14 @@
-<?= $this->extend('/front/themes/default/__layouts/layout') ?>
+<?= $this->extend('/front/themes/' . $theme . '/__layouts/layout') ?>
+
+<div class="jumbotron color-grey-light mt-70">
+    <div class="d-flex align-items-center h-100">
+        <div class="container text-center py-5">
+            <h3 class="mb-0">Sign in</h3>
+        </div>
+    </div>
+</div>
+
+
 <?= $this->section('main') ?>
 <div class="container">
 

@@ -1,10 +1,10 @@
 <?php
 
-namespace Adnduweb\Ci4_page\Config;
+namespace Adnduweb\Ci4_ecommerce\Config;
 
 use CodeIgniter\Config\BaseConfig;
 
-class Page extends BaseConfig
+class Ecommerce extends BaseConfig
 {
     public $authGoogle = true;
 
