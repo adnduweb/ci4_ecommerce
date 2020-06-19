@@ -15,7 +15,7 @@ use Adnduweb\Ci4_page\Libraries\PageDefault;
 
 class FrontAuthenticationController extends \App\Controllers\Front\FrontController
 {
-    use \App\Traits\BuilderTrait;
+    use \App\Traits\BuilderModelTrait;
     use \App\Traits\ModuleTrait;
 
     public $name_module = 'ecommerce';

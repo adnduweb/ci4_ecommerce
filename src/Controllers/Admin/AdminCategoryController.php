@@ -17,7 +17,7 @@ use Adnduweb\Ci4_ecommerce\Models\CategoryModel;
 class AdminCategoryController extends AdminController
 {
 
-    use \App\Traits\BuilderTrait;
+    use \App\Traits\BuilderModelTrait;
     use \App\Traits\ModuleTrait;
 
     /**
@@ -63,7 +63,7 @@ class AdminCategoryController extends AdminController
 
         if (!has_permission(ucfirst($this->controller) . '::views', user()->id)) {
             Tools::set_message('danger', lang('Core.not_acces_permission'), lang('Core.warning_error'));
-            return redirect()->to('/' . CI_SITE_AREA . '/' . user()->id_company . '/dashboard');
+            return redirect()->to('/' . CI_SITE_AREA . '/' . user()->company_id . '/dashboard');
         }
         $this->data['nameController'] = lang('Core.' . $this->controller);
         $this->data['addPathController'] = $this->pathcontroller . '/add';
@@ -89,7 +89,7 @@ class AdminCategoryController extends AdminController
             $this->data['form'] = $this->tableModel->where('id_category', $id)->first();
             if (empty($this->data['form'])) {
                 Tools::set_message('danger', lang('Core.not_{0}_exist', [$this->item]), lang('Core.warning_error'));
-                return redirect()->to('/' . env('CI_SITE_AREA') . '/' . user()->id_company . '/public/blog/categories');
+                return redirect()->to('/' . env('CI_SITE_AREA') . '/' . user()->company_id . '/public/blog/categories');
             }
         }
 

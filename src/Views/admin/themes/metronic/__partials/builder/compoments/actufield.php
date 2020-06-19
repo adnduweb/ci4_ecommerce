@@ -1,4 +1,4 @@
-<?php $categoriesModel = new Adnduweb\Ci4_blog\Models\CategoriesModel(); ?>
+<?php $CategoryModel = new Adnduweb\Ci4_blog\Models\CategoryModel(); ?>
 <?php $field = isset($builder->id_field) ? $builder->id_field : "__field__"; ?>
 <?php $optionsActus = isset($builder->id_field) ? json_decode($builder->options) : ""; ?>
 <?php $settingsActus = isset($builder->id_field) ? json_decode($builder->settings) : ""; ?>
@@ -32,7 +32,7 @@
                         <label><?= lang('Core.by_cat'); ?></label>
                         <select required name="builder[<?= $field; ?>][options][cat]" class="form-control" title="<?= ucfirst(lang('Core.choose_one_of_the_following')); ?>" id="options_cat">
                             <option <?= (isset($optionsActus->orderBy) && $optionsActus->orderBy == 'all') ? 'selected' : ""; ?> value="all">Toutes</option>
-                            <?php foreach ($categoriesModel->getAllCat() as $cat) { ?>
+                            <?php foreach ($CategoryModel->getAllCat() as $cat) { ?>
                                 <option <?= (isset($optionsActus->cat) && $optionsActus->cat == $cat->id_categorie) ? 'selected' : ""; ?> value="<?= $cat->id_categorie; ?>"><?= $cat->name; ?></option>
                             <?php } ?>
 

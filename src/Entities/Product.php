@@ -3,7 +3,7 @@
 namespace Adnduweb\Ci4_ecommerce\Entities;
 
 use CodeIgniter\Entity;
-use Adnduweb\Ci4_ecommerce\Models\CategoriesModel;
+use Adnduweb\Ci4_ecommerce\Models\CategoryModel;
 
 class Product extends Entity
 {
@@ -152,8 +152,8 @@ class Product extends Entity
     {
         $lang = [];
         if (!empty($this->id_product)) {
-            foreach ($this->ec_product_lang as $tabs_lang) {
-                $lang[$tabs_lang->id_lang] = $tabs_lang;
+            foreach ($this->ec_product_lang as $tabs_langs) {
+                $lang[$tabs_langs->id_lang] = $tabs_langs;
             }
         }
         return $lang;

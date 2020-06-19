@@ -39,7 +39,7 @@ class EcommerceSeeder extends \CodeIgniter\Database\Seeder
         // Define default project setting templates
         $rowsCat = [
             [
-                'id_category' => 1,
+                'id' => 1,
                 'id_parent'    => 0,
                 'order'        => 1,
                 'active'       => 1,
@@ -49,7 +49,7 @@ class EcommerceSeeder extends \CodeIgniter\Database\Seeder
         ];
         $rowsCatLang = [
             [
-                'id_category'      => 1,
+                'category_id'      => 1,
                 'id_lang'           => 1,
                 'name'              => 'Défaut',
                 'description_short' => $lipsum->sentence(),
@@ -59,23 +59,23 @@ class EcommerceSeeder extends \CodeIgniter\Database\Seeder
         ];
 
         // Check for and create project setting templates
-        //$pages = new PagesModel();
+        //$pages = new PageModel();
         $db = \Config\Database::connect();
         foreach ($rowsCat as $row) {
-            $article = $db->table('ec_category')->where('id_category', $row['id_category'])->get()->getRow();
+            $article = $db->table('ec_categories')->where('id', $row['id'])->get()->getRow();
             //print_r($article); exit;
             if (empty($article)) {
                 // No setting - add the row
-                $db->table('ec_category')->insert($row);
+                $db->table('ec_categories')->insert($row);
             }
         }
 
         foreach ($rowsCatLang as $rowLang) {
-            $articlelang = $db->table('ec_category_lang')->where('id_category', $rowLang['id_category'])->get()->getRow();
+            $articlelang = $db->table('ec_categories_langs')->where('category_id', $rowLang['category_id'])->get()->getRow();
 
             if (empty($articlelang)) {
                 // No setting - add the row
-                $db->table('ec_category_lang')->insert($rowLang);
+                $db->table('ec_categories_langs')->insert($rowLang);
             }
         }
 
@@ -159,56 +159,6 @@ class EcommerceSeeder extends \CodeIgniter\Database\Seeder
             ],
         ];
 
-        // $rowsTagsTabs = [
-        //     'depth'             => 3,
-        //     'left'              => 16,
-        //     'right'             => 17,
-        //     'position'          => 1,
-        //     'section'           => 0,
-        //     'module'            => 'Adnduweb\Ci4_ecommerce',
-        //     'class_name'        => 'AdminTags',
-        //     'active'            =>  1,
-        //     'icon'              => '',
-        //     'slug'             => 'blog/tags',
-        //     'name_controller'       => ''
-        // ];
-
-        // $rowsTagsTabsLangs = [
-        //     [
-        //         'id_lang'         => 1,
-        //         'name'             => 'tags',
-        //     ],
-        //     [
-        //         'id_lang'         => 2,
-        //         'name'             => 'tags',
-        //     ],
-        // ];
-
-        // $rowsSettingsTabs = [
-        //     'depth'             => 3,
-        //     'left'              => 18,
-        //     'right'             => 19,
-        //     'position'          => 1,
-        //     'section'           => 0,
-        //     'module'            => 'Adnduweb\Ci4_ecommerce',
-        //     'class_name'        => 'AdminBlogSettings',
-        //     'active'            =>  1,
-        //     'icon'              => '',
-        //     'slug'             => 'blog/settings',
-        //     'name_controller'       => ''
-        // ];
-
-        // $rowsSettingsTabsLangs = [
-        //     [
-        //         'id_lang'         => 1,
-        //         'name'             => 'réglages',
-        //     ],
-        //     [
-        //         'id_lang'         => 2,
-        //         'name'             => 'settings',
-        //     ],
-        // ];
-
 
         $tabBlog = $db->table('tabs')->where('class_name', $rowsBlogTabs['class_name'])->get()->getRow();
         //print_r($tab); exit;
@@ -257,40 +207,6 @@ class EcommerceSeeder extends \CodeIgniter\Database\Seeder
                     $i++;
                 }
             }
-
-            // // On Insére les Tags
-            // $tabTag = $db->table('tabs')->where('class_name', $rowsTagsTabs['class_name'])->get()->getRow();
-            // //print_r($tab); exit;
-            // if (empty($tabTag)) {
-            //     // No setting - add the row
-            //     $rowsTagsTabs['id_parent']  = $newInsert;
-            //     $db->table('tabs')->insert($rowsTagsTabs);
-            //     $newInsertTags = $db->insertID();
-            //     $i = 0;
-            //     foreach ($rowsTagsTabsLangs as $rowLang) {
-            //         $rowLang['tab_id']   = $newInsertTags;
-            //         // No setting - add the row
-            //         $db->table('tabs_langs')->insert($rowLang);
-            //         $i++;
-            //     }
-            // }
-
-            // // On Insére les Settings
-            // $tabSettings = $db->table('tabs')->where('class_name', $rowsSettingsTabs['class_name'])->get()->getRow();
-            // //print_r($tab); exit;
-            // if (empty($tabSettings)) {
-            //     // No setting - add the row
-            //     $rowsSettingsTabs['id_parent']  = $newInsert;
-            //     $db->table('tabs')->insert($rowsSettingsTabs);
-            //     $newInsertTags = $db->insertID();
-            //     $i = 0;
-            //     foreach ($rowsSettingsTabsLangs as $rowLang) {
-            //         $rowLang['tab_id']   = $newInsertTags;
-            //         // No setting - add the row
-            //         $db->table('tabs_langs')->insert($rowLang);
-            //         $i++;
-            //     }
-            // }
         }
 
 
@@ -320,65 +236,26 @@ class EcommerceSeeder extends \CodeIgniter\Database\Seeder
                 'is_natif'          => '0',
             ],
             [
-                'name'              => 'EC_category::views',
+                'name'              => 'EC_categories::views',
                 'description'       => 'Voir les categories',
                 'is_natif'          => '0',
             ],
             [
-                'name'              => 'EC_category::create',
+                'name'              => 'EC_categories::create',
                 'description'       => 'Créer des categories',
                 'is_natif'          => '0',
             ],
             [
-                'name'              => 'EC_category::edit',
+                'name'              => 'EC_categories::edit',
                 'description'       => 'Modifier les categories',
                 'is_natif'          => '0',
             ],
             [
-                'name'              => 'EC_category::delete',
+                'name'              => 'EC_categories::delete',
                 'description'       => 'Supprimer des categories',
                 'is_natif'          => '0',
             ],
-            // [
-            //     'name'              => 'Tags::views',
-            //     'description'       => 'Voir les tags',
-            //     'is_natif'          => '0',
-            // ],
-            // [
-            //     'name'              => 'Tags::create',
-            //     'description'       => 'Créer des tags',
-            //     'is_natif'          => '0',
-            // ],
-            // [
-            //     'name'              => 'Tags::edit',
-            //     'description'       => 'Modifier les tags',
-            //     'is_natif'          => '0',
-            // ],
-            // [
-            //     'name'              => 'Tags::delete',
-            //     'description'       => 'Supprimer des tags',
-            //     'is_natif'          => '0',
-            // ],
-            // [
-            //     'name'              => 'SettingsBlog::views',
-            //     'description'       => 'Voir les réglages',
-            //     'is_natif'          => '0',
-            // ],
-            // [
-            //     'name'              => 'SettingsBlog::create',
-            //     'description'       => 'Créer des réglages',
-            //     'is_natif'          => '0',
-            // ],
-            // [
-            //     'name'              => 'SettingsBlog::edit',
-            //     'description'       => 'Modifier les réglages',
-            //     'is_natif'          => '0',
-            // ],
-            // [
-            //     'name'              => 'SettingsBlog::delete',
-            //     'description'       => 'Supprimer des réglages',
-            //     'is_natif'          => '0',
-            // ]
+
         ];
 
         // On insére le role par default au user

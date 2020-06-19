@@ -12,7 +12,7 @@ use Adnduweb\Ci4_blog\Models\CarriersModel;
 
 class FrontOrderController extends \App\Controllers\Front\FrontController
 {
-    use \App\Traits\BuilderTrait;
+    use \App\Traits\BuilderModelTrait;
     use \App\Traits\ModuleTrait;
 
     public $name_module = 'blog';
@@ -21,7 +21,7 @@ class FrontOrderController extends \App\Controllers\Front\FrontController
     public function __construct()
     {
         parent::__construct();
-        $this->tableModel  = new ArticlesModel();
+        $this->tableModel  = new PostModel();
         $this->idModule  = $this->getIdModule();
     }
     public function index()

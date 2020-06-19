@@ -82,8 +82,8 @@ class Category extends Entity
     {
         $lang = [];
         if (!empty($this->id_category)) {
-            foreach ($this->ec_category_lang as $tabs_lang) {
-                $lang[$tabs_lang->id_lang] = $tabs_lang;
+            foreach ($this->ec_category_lang as $tabs_langs) {
+                $lang[$tabs_langs->id_lang] = $tabs_langs;
             }
         }
         return $lang;

@@ -191,15 +191,15 @@ class CategoryModel extends Model
         if (!empty($article_categorie)) {
             foreach ($article_categorie as $article) {
                 // ON supprime cette ec_category des ec_product
-                $this->article_categorie->delete(['id_article' => $article->id_article, 'id_category' => $id_category]);
-                $this->article_categorie->delete(['id_article' => $article->id_article, 'id_category' => $this->id_category_default]);
+                $this->article_categorie->delete(['id_post' => $article->id_post, 'id_category' => $id_category]);
+                $this->article_categorie->delete(['id_post' => $article->id_post, 'id_category' => $this->id_category_default]);
 
 
                 $this->article_categorie->set(['id_category' => $this->id_category_default]);
                 $this->article_categorie->where('id_category', $id_category);
 
                 $data = [
-                    'id_article'   =>  $article->id_article,
+                    'id_post'   =>  $article->id_post,
                     'id_category' => $this->id_category_default,
                     'created_at' => date('Y-m-d H:i:s'),
                 ];

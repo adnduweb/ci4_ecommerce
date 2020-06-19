@@ -178,9 +178,9 @@ class Migration_create_customer_tables extends Migration
          * Product
          */
         $this->forge->addField([
-            'id_product'          => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
+            'id'                  => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
             'id_category_default' => ['type' => 'int',  'constraint' => 11, 'default' => 1],
-            'id_location'          => ['type' => 'int',  'constraint' => 11, 'default' => 1],
+            'id_location'         => ['type' => 'int',  'constraint' => 11, 'default' => 1],
             'id_supplier'         => ['type' => 'int',  'constraint' => 11, 'default' => 1],
             'id_manufacturer'     => ['type' => 'int',  'constraint' => 11, 'default' => 1],
             'id_taxe'             => ['type' => 'int',  'constraint' => 11, 'default' => 1],
@@ -201,21 +201,22 @@ class Migration_create_customer_tables extends Migration
             'deleted_at'          => ['type' => 'datetime', 'null' => true],
         ]);
 
-        $this->forge->addKey('id_product', true);
+        $this->forge->addKey('id', true);
         $this->forge->addKey('id_category_default');
         $this->forge->addKey('id_supplier');
         $this->forge->addKey('id_manufacturer');
         $this->forge->addKey('id_location');
         $this->forge->addKey('created_at');
         $this->forge->addKey('deleted_at');
-        $this->forge->createTable('ec_product', true);
+        $this->forge->createTable('ec_products', true);
 
 
         /*
          * Product lang
          */
         $fields = [
-            'id_product'        => ['type' => 'INT', 'constraint' => 11, 'unsigned' => true],
+            'id_product_lang' => ['type' => 'INT', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
+            'product_id'        => ['type' => 'INT', 'constraint' => 11, 'unsigned' => true],
             'id_lang'           => ['type' => 'INT', 'constraint' => 11],
             'name'              => ['type' => 'VARCHAR', 'constraint' => 255],
             'sous_name'         => ['type' => 'VARCHAR', 'constraint' => 255],
@@ -228,36 +229,36 @@ class Migration_create_customer_tables extends Migration
         ];
 
         $this->forge->addField($fields);
-        //$this->forge->addKey('id_product');
-        $this->forge->addKey('id_product');
+        $this->forge->addKey('id_product_lang', true);
         $this->forge->addKey('id_lang');
-        $this->forge->addForeignKey('id_product', 'ec_product', 'id_product', false, 'CASCADE');
-        $this->forge->createTable('ec_product_lang', true);
+        $this->forge->addForeignKey('product_id', 'ec_products', 'id', false, 'CASCADE');
+        $this->forge->createTable('ec_products_langs', true);
 
         /*
          * Product
          */
-        /* CATEGORyS */
+        /* CATEGORYS */
         $fields = [
-            'id_category' => ['type' => 'INT', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
-            'id_parent'    => ['type' => 'INT', 'constraint' => 11, 'default' => 0],
-            'order'        => ['type' => 'INT', 'constraint' => 11, 'default' => 0],
-            'active'       => ['type' => 'INT', 'constraint' => 11, 'default' => 1],
-            'created_at'   => ['type' => 'DATETIME', 'null' => true],
-            'updated_at'   => ['type' => 'DATETIME', 'null' => true],
-            'deleted_at'   => ['type' => 'DATETIME', 'null' => true],
+            'id'         => ['type' => 'INT', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
+            'id_parent'  => ['type' => 'INT', 'constraint' => 11, 'default' => 0],
+            'order'      => ['type' => 'INT', 'constraint' => 11, 'default' => 0],
+            'active'     => ['type' => 'INT', 'constraint' => 11, 'default' => 1],
+            'created_at' => ['type' => 'DATETIME', 'null' => true],
+            'updated_at' => ['type' => 'DATETIME', 'null' => true],
+            'deleted_at' => ['type' => 'DATETIME', 'null' => true],
         ];
 
         $this->forge->addField($fields);
-        $this->forge->addKey('id_category', true);
+        $this->forge->addKey('id', true);
         $this->forge->addKey('created_at');
         $this->forge->addKey('updated_at');
         $this->forge->addKey('deleted_at');
-        $this->forge->createTable('ec_category');
+        $this->forge->createTable('ec_categories');
 
 
         $fields = [
-            'id_category'      => ['type' => 'INT', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
+            'id_categorie_lang' => ['type' => 'INT', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
+            'category_id'       => ['type' => 'INT', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
             'id_lang'           => ['type' => 'INT', 'constraint' => 11],
             'name'              => ['type' => 'VARCHAR', 'constraint' => 255],
             'description_short' => ['type' => 'TEXT'],
@@ -265,27 +266,20 @@ class Migration_create_customer_tables extends Migration
         ];
 
         $this->forge->addField($fields);
-        // $this->forge->addKey(['id_item', 'id_lang'], false, true);
-        $this->forge->addKey('id_category');
+        $this->forge->addKey('id_categorie_lang', true);
         $this->forge->addKey('id_lang');
-        $this->forge->addForeignKey('id_category', 'ec_category', 'id_category', false, 'CASCADE');
-        $this->forge->createTable('ec_category_lang', true);
+        $this->forge->addForeignKey('category_id', 'ec_categories', 'id', false, 'CASCADE');
+        $this->forge->createTable('ec_categories_langs', true);
 
         $fields = [
-            'id_product'   => ['type' => 'INT', 'constraint' => 11, 'unsigned' => true],
-            'id_category' => ['type' => 'INT', 'constraint' => 11, 'unsigned' => true],
-            'created_at'   => ['type' => 'DATETIME', 'null' => true],
-            'deleted_at'   => ['type' => 'DATETIME', 'null' => true],
+            'product_id'   => ['type' => 'INT', 'constraint' => 11, 'unsigned' => true],
+            'category_id' => ['type' => 'INT', 'constraint' => 11, 'unsigned' => true]
         ];
 
         $this->forge->addField($fields);
-        // $this->forge->addKey(['id_item', 'id_lang'], false, true);
-        $this->forge->addKey(['id_product', 'id_category'], FALSE, TRUE);
-        $this->forge->addKey('created_at');
-        $this->forge->addKey('deleted_at');
-        $this->forge->addForeignKey('id_product', 'ec_product', 'id_product', false, 'CASCADE');
-        $this->forge->addForeignKey('id_category', 'ec_category', 'id_category', false, false);
-        $this->forge->createTable('ec_product_category', true);
+        $this->forge->addForeignKey('product_id', 'ec_products', 'id', false, 'CASCADE');
+        $this->forge->addForeignKey('category_id', 'ec_categories', 'id', false, false);
+        $this->forge->createTable('ec_products_categories', true);
     }
 
 
@@ -318,7 +312,10 @@ class Migration_create_customer_tables extends Migration
         $this->forge->dropTable('authf_groups_customer', true);
         $this->forge->dropTable('authf_customer_permissions', true);
 
-        $this->forge->dropTable('product', true);
-        $this->forge->dropTable('product_langs', true);
+        $this->forge->dropTable('ec_products', true);
+        $this->forge->dropTable('ec_products_langs', true);
+        $this->forge->dropTable('ec_categories', true);
+        $this->forge->dropTable('ec_categories_langs', true);
+        $this->forge->dropTable('ec_products_category', true);
     }
 }

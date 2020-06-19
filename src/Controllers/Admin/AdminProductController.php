@@ -17,7 +17,7 @@ use Adnduweb\Ci4_ecommerce\Models\CategoryModel;
 class AdminProductController extends AdminController
 {
 
-    use \App\Traits\BuilderTrait;
+    use \App\Traits\BuilderModelTrait;
     use \App\Traits\ModuleTrait;
 
     /**
