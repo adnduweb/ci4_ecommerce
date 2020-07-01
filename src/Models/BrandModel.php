@@ -10,38 +10,38 @@
 namespace Adnduweb\Ci4_ecommerce\Models;
 
 use CodeIgniter\Model;
-use Adnduweb\Ci4_ecommerce\Entities\Category;
+use Adnduweb\Ci4_ecommerce\Entities\Brand;
 
 /**
  * Class CategoryModel
  *
  * @package App\Models
  */
-class CategoryModel extends Model
+class BrandModel extends Model
 {
     use \Tatter\Relations\Traits\ModelTrait, \Adnduweb\Ci4_logs\Traits\AuditsTrait, \App\Models\BaseModel;
 
     /**
      * @var \CodeIgniter\Database\BaseBuilder
      */
-    private $categories;
+    private $brands;
 
     protected $afterInsert         = ['auditInsert'];
     protected $afterUpdate         = ['auditUpdate'];
     protected $afterDelete         = ['auditDelete'];
-    protected $table               = 'ec_categories';
-    protected $tableLang           = 'ec_categories_langs';
+    protected $table               = 'ec_brands';
+    protected $tableLang           = 'ec_brands_langs';
     protected $primaryKey          = 'id';
-    protected $primaryKeyLang      = 'category_id';
+    protected $primaryKeyLang      = 'brand_id';
     protected $tableP               = 'ec_products';
     protected $tablePLang           = 'ec_products_langs';
     protected $primaryKeyP          = 'id';
     protected $primaryKeyPLang      = 'product_id';
-    protected $with                = ['ec_categories_langs'];
+    protected $with                = ['ec_brands_langs'];
     protected $without             = [];
-    protected $returnType          = Category::class;
+    protected $returnType          = Brand::class;
     protected $useSoftDeletes      = true;
-    protected $allowedFields       = ['id_parent', 'active', 'order'];
+    protected $allowedFields       = ['name', 'active'];
     protected $useTimestamps       = true;
     protected $validationRules     = [];
     protected $validationMessages  = [];
@@ -58,16 +58,16 @@ class CategoryModel extends Model
     public function __construct(...$params)
     {
         parent::__construct(...$params);
-        $this->builder                = $this->db->table('ec_categories');
-        $this->builder_lang           = $this->db->table('ec_categories_langs');
-        $this->ec_products            = $this->db->table('ec_products');
-        $this->ec_products_categories = $this->db->table('ec_products_categories');
+        $this->builder           = $this->db->table('ec_brands');
+        $this->builder_lang      = $this->db->table('ec_brands_langs');
+        $this->ec_products       = $this->db->table('ec_products');
+        $this->ec_products_langs = $this->db->table('ec_products_langs');
     }
 
     public function getAllCategoriesOptionParent()
     {
         $instance = [];
-        $this->builder->select($this->table . '.' . $this->primaryKey . ', slug, name, id_parent, created_at');
+        $this->builder->select($this->table . '.' . $this->primaryKey . ', slug, name, created_at');
         $this->builder->join($this->tableLang, $this->table . '.' . $this->primaryKey . ' = ' . $this->tableLang . '.' . $this->primaryKeyLang);
         $this->builder->where('deleted_at IS NULL AND id_lang = ' . service('switchlanguage')->getIdLocale());
         $this->builder->orderBy($this->table . '.' . $this->primaryKey . ' DESC');
@@ -77,7 +77,7 @@ class CategoryModel extends Model
         // exit;
         if (!empty($categoriess)) {
             foreach ($categoriess as $categories) {
-                $instance[] = new Category((array) $categories);
+                $instance[] = new Brand((array) $categories);
             }
         } 
         return $instance;
@@ -85,7 +85,7 @@ class CategoryModel extends Model
 
     public function getAllList(int $page, int $perpage, array $sort, array $query)
     {
-        $categoriesRow = $this->getBaseAllList($page, $perpage, $sort, $query, $this->searchKtDatatable);
+        $categoriesRow = $this->getBaseAllList($page, $perpage, $sort, $query, $this->searchKtDatatable);;
 
         // In va chercher les products
         if (!empty($categoriesRow)) {
@@ -128,7 +128,7 @@ class CategoryModel extends Model
     public function changeItemIncat(int $id)
     {
         $this->ec_products->selectCount($this->tableP . '.' . $this->primaryKeyP);
-        $this->ec_products->where('deleted_at IS NULL AND  id_category_default = ' . $id);
+        $this->ec_products->where('deleted_at IS NULL AND '.$this->primaryKeyLang.' = ' . $id);
         return $this->ec_products->get()->getRow();
     }
 
@@ -183,26 +183,6 @@ class CategoryModel extends Model
         }
     }
 
-    /**
-     * Inforsmations pour lister les categories
-     * 
-     */
-    public function getCategoriesNavbar(string $sort){
-        $this->builder->select($this->table . '.' . $this->primaryKey . ', name');
-        $this->builder->join($this->tableLang, $this->table . '.' . $this->primaryKey . ' = ' . $this->tableLang . '.' . $this->primaryKeyLang);
-        $this->builder->where('deleted_at IS NULL AND id_lang = ' . service('switchlanguage')->getIdLocale());
-        $this->builder->orderBy($this->table . '.' . $this->primaryKey . ' ' . $sort);
-
-        $categories = $this->builder->get()->getResult('array');
-        $instance  = [];
-        if (!empty($categories)) {
-            foreach ($categories as $categorie) {
-                $instance[] = new Category($categorie);
-            }
-        }
-        return $instance;
-    }
-
     //     /**
     //      * @param int $id
     //      * @param string $column
@@ -251,10 +231,10 @@ class CategoryModel extends Model
     //         $this->article_categorie->where(['id_category' => $id_category]);
     //         $article_categorie = $this->article_categorie->get()->getResult();
 
-    //         // On met par default les relatiosn ec_categories
+    //         // On met par default les relatiosn ec_brands
     //         if (!empty($article_categorie)) {
     //             foreach ($article_categorie as $article) {
-    //                 // ON supprime cette ec_categories des ec_products
+    //                 // ON supprime cette ec_brands des ec_products
     //                 $this->article_categorie->delete(['id_post' => $article->id_post, 'id_category' => $id_category]);
     //                 $this->article_categorie->delete(['id_post' => $article->id_post, 'id_category' => $this->id_category_default]);
 
@@ -279,7 +259,7 @@ class CategoryModel extends Model
     //         $this->ec_products->where(['id_category_default' => $id_category]);
     //         $ec_products = $this->builder_lang->get()->getResult();
 
-    //         // On met par default les relatiosn ec_categories
+    //         // On met par default les relatiosn ec_brands
     //         if (!empty($ec_products)) {
     //             foreach ($ec_products as $article) {
     //                 $this->ec_products->set(['id_category_default' => $this->id_category_default]);

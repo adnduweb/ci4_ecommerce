@@ -5,16 +5,16 @@ namespace Adnduweb\Ci4_ecommerce\Controllers\Admin;
 use App\Controllers\Admin\AdminController;
 use App\Libraries\AssetsBO;
 use App\Libraries\Tools;
-use Adnduweb\Ci4_ecommerce\Entities\Category;
+use Adnduweb\Ci4_ecommerce\Entities\Supplier;
 use Adnduweb\Ci4_ecommerce\Models\ProductModel;
-use Adnduweb\Ci4_ecommerce\Models\CategoryModel;
+use Adnduweb\Ci4_ecommerce\Models\supplierModel;
 
 /**
  * Class Article
  *
  * @package App\Controllers\Admin
  */
-class AdminCategoryController extends AdminController
+class AdminSupplierController extends AdminController
 {
 
     use \App\Traits\BuilderModelTrait;
@@ -37,7 +37,7 @@ class AdminCategoryController extends AdminController
     public $controller      = 'ecommerce';
     public $item            = 'ecommerce';
     public $type            = 'Adnduweb/Ci4_ecommerce';
-    public $pathcontroller  = '/ecommerce/catalogue/category';
+    public $pathcontroller  = '/ecommerce/catalogue/supplier';
     public $fieldList       = 'name';
     public $add             = true;
     public $multilangue     = true;
@@ -52,7 +52,7 @@ class AdminCategoryController extends AdminController
     public function __construct()
     {
         parent::__construct();
-        $this->tableModel     = new CategoryModel();
+        $this->tableModel     = new SupplierModel();
         $this->product_model = new ProductModel();
         $this->module         = "ecommerce";
         $this->idModule       = $this->getIdModule();
@@ -61,12 +61,12 @@ class AdminCategoryController extends AdminController
 
     public function renderViewList()
     {
-        AssetsBO::add_js([$this->get_current_theme_view('controllers/' . $this->controller . '/js/listCat.js', 'default')]);
+        AssetsBO::add_js([$this->get_current_theme_view('controllers/' . $this->controller . '/js/listSupplier.js', 'default')]);
         helper('form');
 
         if (!has_permission(ucfirst($this->controller) . '::views', user()->id)) {
             Tools::set_message('danger', lang('Core.not_acces_permission'), lang('Core.warning_error'));
-            return redirect()->to('/' . CI_SITE_AREA . '/' . user()->company_id . '/dashboard');
+            return redirect()->to('/' . CI_SITE_AREA . '/dashboard');
         }
         $this->data['nameController'] = lang('Core.' . $this->controller);
         $this->data['addPathController'] = $this->pathcontroller . '/add';
@@ -78,7 +78,7 @@ class AdminCategoryController extends AdminController
         $this->data['countList'] = $this->tableModel->getAllCount(['field' => $this->fieldList, 'sort' => 'ASC'], []);
         $this->data['categories'] = $this->tableModel->getAllCategoriesOptionParent();
 
-        return view($this->get_current_theme_view('categorie/index', $this->type), $this->data);
+        return view($this->get_current_theme_view('supplier/index', $this->type), $this->data);
     }
 
 
@@ -91,7 +91,7 @@ class AdminCategoryController extends AdminController
     public function renderForm($id = null)
     {
         if (is_null($id)) {
-            $this->data['form'] = new Category($this->request->getPost());
+            $this->data['form'] = new supplier($this->request->getPost());
         } else {
             $this->data['form'] = $this->tableModel->where('id', $id)->first();
             if (empty($this->data['form'])) {
@@ -99,27 +99,24 @@ class AdminCategoryController extends AdminController
                 return redirect()->to('/' . env('CI_SITE_AREA') . '/public/blog/categories');
             }
         }
-
-        $this->data['form']->allCategories = $this->tableModel->getAllCategoriesOptionParent();
+        AssetsBO::add_js([$this->get_current_theme_view('plugins/custom/ckeditor/ckeditor-classic.bundle.js', 'default')]);
         $this->data['form']->id_module = $this->idModule;
         $this->data['form']->id_item = $id;
-        //$this->data['form']->categories = $this->tableModel->join($this->tableModel->tableLang, $this->tableModel->table . '.' . $this->tableModel->primaryKey . ' = ' . $this->tableModel->tableLang . '.' . $this->tableModel->primaryKeyLang)->where('id_lang', 1)->orderBy('name', 'ACS')->get()->getResult();
-        //print_r($this->data['form']->ec_categories_langs);
-        //exit;
 
         parent::renderForm($id);
         $this->data['edit_title'] = lang('Core.edit_categorie');
-        return view($this->get_current_theme_view('categorie/form', 'Adnduweb/Ci4_ecommerce'), $this->data);
+        return view($this->get_current_theme_view('supplier/form', 'Adnduweb/Ci4_ecommerce'), $this->data);
     }
 
     public function postProcessEdit($param)
     {
 
         // Try to create the user
-        $categorieBase = new Category($this->request->getPost());
+        $categorieBase = new supplier();
+        $categorieBase->fill($this->request->getPost());
         $this->lang = $this->request->getPost('lang');
         $categorieBase->active = isset($categorieBase->active) ? 1 : 0;
-
+       
         if (!$this->tableModel->save($categorieBase)) {
             Tools::set_message('danger', $this->tableModel->errors(), lang('Core.warning_error'));
             return redirect()->back()->withInput();
@@ -140,7 +137,8 @@ class AdminCategoryController extends AdminController
     public function postProcessAdd($param)
     {
         // Try to create the user
-        $categorieBase = new Category($this->request->getPost());
+        $categorieBase = new supplier();
+        $categorieBase->fill($this->request->getPost());
         $this->lang = $this->request->getPost('lang');
 
         if (!$this->tableModel->save($categorieBase)) {
@@ -213,3 +211,4 @@ class AdminCategoryController extends AdminController
     }
 
 }
+

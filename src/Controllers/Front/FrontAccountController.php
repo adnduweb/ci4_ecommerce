@@ -11,6 +11,7 @@ use Adnduweb\Ci4_ecommerce\Models\CartModel;
 use Adnduweb\Ci4_ecommerce\Models\OrderModel;
 use Adnduweb\Ci4_ecommerce\Models\CarriersModel;
 use Adnduweb\Ci4_ecommerce\Models\CustomerModel;
+use Adnduweb\Ci4_page\Libraries\PageDefault;
 
 class FrontAccountController extends FrontEcommerceController
 {
@@ -21,10 +22,17 @@ class FrontAccountController extends FrontEcommerceController
     }
     public function index()
     {
-        //Silent
-        $this->data['page'] = new Customer();
-        // print_r($this->data['page']);
 
+        // Load Header
+        $header_parameter = array(
+            'title' => lang('Front_default.account'),
+            'meta_title' => lang('Front_default.account_meta_title'),
+            'meta_description' => lang('Front_default.account_meta_description'),
+            'url' => [1 => ['slug' => 'my-account'], 2 => ['slug' => 'my-account']],
+        );
+
+
+        $this->data['page'] = new PageDefault($header_parameter);
         $this->data['no_follow_no_index'] = 'index follow';
         $this->data['id']  = 'authentification';
         $this->data['class'] = $this->data['class'] . ' authentification';
@@ -32,13 +40,6 @@ class FrontAccountController extends FrontEcommerceController
         $this->data['meta_description'] = '';
         $this->data['config'] = $this->config;
 
-        // On regarde si on est connecté
-
-        //Si oui
-        //On redirige
-
-        //Si non connexion
-        // $this->data = [];
         return view($this->get_current_theme_view('__template_part/ecommerce/my-account', 'default'), $this->data);
     }
 }

@@ -7,13 +7,15 @@ use Adnduweb\Ci4_ecommerce\Entities\Cart;
 use Adnduweb\Ci4_ecommerce\Entities\Order;
 use Adnduweb\Ci4_ecommerce\Entities\Carrier;
 use Adnduweb\Ci4_ecommerce\Entities\Customer;
+use Adnduweb\Ci4_ecommerce\Models\ProductModel;
 use Adnduweb\Ci4_ecommerce\Models\CartModel;
 use Adnduweb\Ci4_ecommerce\Models\OrderModel;
 use Adnduweb\Ci4_ecommerce\Models\CarriersModel;
 use Adnduweb\Ci4_ecommerce\Models\CustomerModel;
 use Adnduweb\Ci4_page\Libraries\PageDefault;
+use Adnduweb\Ci4_ecommerce\Exceptions\EcommerceException;
 
-class FrontAuthenticationController extends \App\Controllers\Front\FrontController
+class FrontShoppingCartController extends \App\Controllers\Front\FrontController
 {
     use \App\Traits\BuilderModelTrait;
     use \App\Traits\ModuleTrait;
@@ -31,30 +33,115 @@ class FrontAuthenticationController extends \App\Controllers\Front\FrontControll
      */
     protected $session;
 
+    /**
+     * @var \CodeIgniter\Session\Session
+     */
+    protected $cart;
+
 
     public function __construct()
     {
         parent::__construct();
         $this->config = config('Authcustomer');
         $this->Authcustomer = service('authenticationcustomer');
+        $this->cart = cart();
     }
     public function index()
     {
         //Silent
     }
 
-    /**
-     * Log the user out.
-     */
-    public function logout()
+    public function ajax()
     {
-        if ($this->Authcustomer->check()) {
-            $this->Authcustomer->logout();
+        if ($this->request->isAJAX()) {
+
+
+            $product = (new ProductModel())->find($this->request->getPost('id_product'));
+            // print_r($product); exit;
+
+            if (!$product) {
+                throw EcommerceException::forProductNotFound();
+                //abort(404);
+                //return $this->response->setJSON($data);
+            }
+
+            // if cart is empty then this the first product
+            if (!$this->cart->contents()) {
+
+                $this->cart->insert(array(
+                    'id'      => $product->getIdItem(),
+                    'qty'     => $this->request->getPost('qty'),
+                    'price'   => $product->getBPrice(),
+                    'name'    => $product->getBName(),
+                ));
+
+
+                $response = [
+                    'success' => true,
+                    'id'      => 123,
+                    'message' => lang('Front_default.Product added to cart successfully!')
+                ];
+                return $this->response->setJSON($response);
+            }
+
+
+            // if cart not empty then check if this product exist then increment quantity
+            if (!empty($this->cart->contents())) {
+
+                foreach ($this->cart->contents() as $items) {
+                    if ($items['id'] == $this->request->getPost('id_product')) {
+                        $data = array(
+                            "rowid" => $items["rowid"],
+                            "qty" => $this->request->getPost('qty'),
+                        );
+
+                        $this->cart->update($data);
+
+                        $response = [
+                            'success' => true,
+                            'id'      => 123,
+                            'message' => lang('Front_default.Product added to cart successfully!')
+                        ];
+                              return $this->response->setJSON($response);
+                    }else{
+                        $this->cart->insert(array(
+                            'id'      => $product->getIdItem(),
+                            'qty'     => $this->request->getPost('qty'),
+                            'price'   => $product->getBPrice(),
+                            'name'    => $product->getBName(),
+                            'options' => array('Size' => 'L', 'Color' => 'Red')
+                        ));
+            
+                        $response = [
+                            'success' => true,
+                            'id'      => 123,
+                            'message' => lang('Front_default.Product added to cart successfully!')
+                        ];
+                        return $this->response->setJSON($response);
+                    }
+                }
+            }
+
+            // if item not exist in cart then add to cart with quantity = 1
+            $this->cart->insert(array(
+                'id'      => $product->getIdItem(),
+                'qty'     => $this->request->getPost('qty'),
+                'price'   => $product->getBPrice(),
+                'name'    => $product->getBName(),
+                'options' => array('Size' => 'L', 'Color' => 'Red')
+            ));
+
+            $response = [
+                'success' => true,
+                'id'      => 123,
+                'message' => lang('Front_default.Product added to cart successfully! encore nouveau')
+            ];
+            return $this->response->setJSON($response);
         }
-        return redirect()->to('/');
     }
 
-    public function SignIn()
+
+    public function ShoppingCart()
     {
 
         // $client = new \Google_Client();
@@ -86,7 +173,52 @@ class FrontAuthenticationController extends \App\Controllers\Front\FrontControll
         $this->data['config'] = $this->config;
 
 
-        return view($this->get_current_theme_view('__template_part/ecommerce/sign_in', 'default'), $this->data);
+
+
+        /**** CART  */
+
+
+        // Call the cart service using the helper function
+        $cart = cart();
+
+
+        // Insert an array of values
+
+        // $cart->insert(array(
+        //     'id'      => 'sku_1234ABCD',
+        //     'qty'     => 1,
+        //     'price'   => '19.56',
+        //     'name'    => 'T-Shirt',
+        //     'options' => array('Size' => 'L', 'Color' => 'Red')
+        // ));
+
+
+
+        // // Update an array of values
+        // $cart->update(array(
+        //     'rowid'   => '4166b0e7fc8446e81e16s883e9a812db8',
+        //     'id'     => 'sku_1234ABCD',
+        //     'qty'     => 3,
+        //     'price'   => '24.89',
+        //     'name'    => 'T-Shirt',
+        //     'options' => array('Size' => 'L', 'Color' => 'Red')
+        // ));
+
+        // // Get the total items
+        // $cart->totalItems();
+
+        // // // Remove an item using its `rowid`
+        // // $cart->remove('4166b0e7fc8446e81e16883e9a812db8');
+
+        // // // Clear the shopping cart
+        // // $cart->destroy();
+
+        // // Get the cart contents as an array
+        // $cart->contents();
+
+
+
+        return view($this->get_current_theme_view('__template_part/ecommerce/shopping_cart', 'default'), $this->data);
     }
 
     public function postProcessSignIn()
@@ -229,7 +361,7 @@ class FrontAuthenticationController extends \App\Controllers\Front\FrontControll
      */
     public function activateAccount()
     {
-        ////http://startci44.lan/fr/activate-account-customer?token=79fe6bbff1d5aaa8dec471e336c7012c
+        ////http://startci44.lan/activate-account-customer?token=76b7d5ca33d6b2bc0cee3e11e58cab7a
         $customers = model('CustomerModel');
 
         // First things first - log the activation attempt.

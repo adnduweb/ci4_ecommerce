@@ -3,16 +3,19 @@
 namespace Adnduweb\Ci4_ecommerce\Entities;
 
 use CodeIgniter\Entity;
+use CodeIgniter\I18n\Time;
 use Adnduweb\Ci4_ecommerce\Models\CategoryModel;
 
 class Product extends Entity
 {
     use \Tatter\Relations\Traits\EntityTrait;
     use \App\Traits\BuilderEntityTrait;
-    protected $table        = 'ec_product';
-    protected $tableLang    = 'ec_product_lang';
-    protected $tablecArtCat = 'ec_product_category';
-    protected $primaryKey   = 'id_product';
+    protected $table        = 'ec_products';
+    protected $tableLang    = 'ec_products_langs';
+    protected $tablecArtCat = 'ec_products_categories';
+    protected $primaryKey   = 'id';
+    protected $primaryKeyLang  = 'product_id';
+    protected $primaryKeyCLang = 'category_id';
 
     protected $datamap = [];
     /**
@@ -25,68 +28,22 @@ class Product extends Entity
      */
     protected $casts = [];
 
-    public function getId()
-    {
-        return $this->id_product ?? null;
-    }
 
-    public function getClassEntities()
-    {
-        return $this->table;
-    }
-    public function getName()
-    {
-        return $this->attributes['name'] ?? null;
-    }
-    public function getSlug()
-    {
-        return $this->attributes['slug'] ?? null;
-    }
 
-    public function getDescription(int $id_lang)
+    /** 
+     *
+     * Nom de la categorie 
+     */
+    public function getBNameCategorie()
     {
-        foreach ($this->ec_product_lang as $lang) {
-            if ($id_lang == $lang->id_lang) {
-                return $lang->description ?? null;
-            }
+        if (isset($this->{$this->tableLang})) {
+            return $this->attributes['name_categorie'] ?? null;
         }
     }
 
-    public function getDescriptionShort(int $id_lang)
-    {
-        foreach ($this->ec_product_lang as $lang) {
-            if ($id_lang == $lang->id_lang) {
-                return $lang->description_short ?? null;
-            }
-        }
-    }
 
-    public function get_MetaDescription(int $id_lang)
-    {
-        foreach ($this->ec_product_lang as $lang) {
-            if ($id_lang == $lang->id_lang) {
-                return $lang->metat_description ?? null;
-            }
-        }
-    }
 
-    public function get_MetaTitle(int $id_lang)
-    {
-        foreach ($this->ec_product_lang as $lang) {
-            if ($id_lang == $lang->id_lang) {
-                return $lang->meta_title ?? null;
-            }
-        }
-    }
 
-    public function getLinkArticle($slug = false, int $id_lang)
-    {
-        foreach ($this->ec_product_lang as $lang) {
-            if ($id_lang == $lang->id_lang) {
-                return base_urlFront($slug . '/' . $lang->slug);
-            }
-        }
-    }
 
     public function getPictureOneAtt()
     {
@@ -123,9 +80,19 @@ class Product extends Entity
             }
         }
 
-        //var_dump($image);exit;
-
         return $image;
+    }
+
+    public function getBPrice()
+    {
+        return $this->price;
+    }
+
+    public function isNew()
+    {
+        $time1   = Time::parse(date($this->created_at, config('Ecommerce')->newProduct));
+        $time2 = new Time('now');
+        return $time1->isBefore($time2);
     }
 
     public function getPictureheaderAtt()
@@ -136,67 +103,56 @@ class Product extends Entity
         return null;
     }
 
-    public function getNameAllLang()
-    {
-        $name = [];
-        $i = 0;
-        foreach ($this->ec_product_lang as $lang) {
-            $name[$lang->id_lang]['name'] = $lang->name;
-            $i++;
-        }
-        return $name ?? null;
-    }
-
-
     public function _prepareLang()
     {
         $lang = [];
-        if (!empty($this->id_product)) {
-            foreach ($this->ec_product_lang as $tabs_langs) {
-                $lang[$tabs_langs->id_lang] = $tabs_langs;
+        if (!empty($this->{$this->primaryKey})) {
+            foreach ($this->{$this->tableLang} as $tabs_lang) {
+                $lang[$tabs_lang->id_lang] = $tabs_lang;
             }
         }
         return $lang;
     }
+
     public function saveLang(array $data, int $key)
     {
         //print_r($data);
         $db      = \Config\Database::connect();
         $builder = $db->table($this->tableLang);
         foreach ($data as $k => $v) {
-            $this->tableLang =  $builder->where(['id_lang' => $k, 'id_product' => $key])->get()->getRow();
+            $this->tableLang =  $builder->where(['id_lang' => $k, $this->primaryKeyLang => $key])->get()->getRow();
             // print_r($this->tableLang);
             if (empty($this->tableLang)) {
                 $data = [
-                    'id_product'      => $key,
-                    'id_lang'           => $k,
-                    'name'              => $v['name'],
-                    'sous_name'         => $v['sous_name'],
-                    'description_short' => $v['description_short'],
-                    'description'       => $v['description'],
-                    'meta_title'        => $v['meta_title'],
-                    'meta_description'  => $v['meta_description'],
-                    'tags'              => isset($v['tags']) ? $v['tags'] : '',
-                    'slug'              => uniforme(trim($v['slug'])),
+                    $this->primaryKeyLang => $key,
+                    'id_lang'             => $k,
+                    'name'                => $v['name'],
+                    'sous_name'           => $v['sous_name'],
+                    'description_short'   => $v['description_short'],
+                    'description'         => $v['description'],
+                    'meta_title'          => $v['meta_title'],
+                    'meta_description'    => $v['meta_description'],
+                    'tags'                => isset($v['tags']) ? $v['tags'] : '',
+                    'slug'                => uniforme(trim($v['slug'])),
                 ];
                 // Create the new participant
                 $builder->insert($data);
             } else {
                 $data = [
-                    'id_product' => $this->tableLang->id_product,
-                    'id_lang'      => $this->tableLang->id_lang,
-                    'name'              => $v['name'],
-                    'sous_name'         => $v['sous_name'],
-                    'description_short' => $v['description_short'],
-                    'description'       => $v['description'],
-                    'meta_title'        => $v['meta_title'],
-                    'meta_description'  => $v['meta_description'],
-                    'tags'              => isset($v['tags']) ? $v['tags'] : '',
-                    'slug'              => uniforme(trim($v['slug'])),
+                    $this->primaryKeyLang => $this->tableLang->{$this->primaryKeyLang},
+                    'id_lang'             => $this->tableLang->id_lang,
+                    'name'                => $v['name'],
+                    'sous_name'           => $v['sous_name'],
+                    'description_short'   => $v['description_short'],
+                    'description'         => $v['description'],
+                    'meta_title'          => $v['meta_title'],
+                    'meta_description'    => $v['meta_description'],
+                    'tags'                => isset($v['tags']) ? $v['tags'] : '',
+                    'slug'                => uniforme(trim($v['slug'])),
                 ];
                 print_r($data);
                 $builder->set($data);
-                $builder->where(['id_product' => $this->tableLang->id_product, 'id_lang' => $this->tableLang->id_lang]);
+                $builder->where([$this->primaryKeyLang => $this->tableLang->{$this->primaryKeyLang}, 'id_lang' => $this->tableLang->id_lang]);
                 $builder->update();
             }
         }
@@ -204,21 +160,22 @@ class Product extends Entity
 
     public function saveCategorie($data)
     {
+        // print_r($data); exit;
         $db         = \Config\Database::connect();
         $builder    = $db->table($this->tablecArtCat);
-        $id_product = $data->id_product;
+        $id_product = $data->{$this->primaryKey};
 
-        $builder->delete(['id_product' => $id_product]);
+        $builder->delete([$this->primaryKeyLang => $id_product]);
 
         foreach ($data->id_category as $k => $v) {
 
-            $this->tablecArtCat =  $builder->where(['id_category' => $v, 'id_product' => $id_product])->get()->getRow();
+            $this->tablecArtCat =  $builder->where([$this->primaryKeyCLang => $v, $this->primaryKeyLang => $id_product])->get()->getRow();
             if (empty($this->tablecArtCat)) {
                 $data = [
-                    'id_product'   =>  $id_product,
-                    'id_category' => $v,
-                    'created_at' => date('Y-m-d H:i:s'),
+                    $this->primaryKeyLang  => $id_product,
+                    $this->primaryKeyCLang => $v
                 ];
+                //print_r($data); 
                 $builder->insert($data);
             }
         }

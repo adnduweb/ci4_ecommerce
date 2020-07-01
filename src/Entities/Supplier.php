@@ -4,14 +4,23 @@ namespace Adnduweb\Ci4_ecommerce\Entities;
 
 use CodeIgniter\Entity;
 
-class Category extends Entity
+class Supplier extends Entity
 {
     use \Tatter\Relations\Traits\EntityTrait;
     use \App\Traits\BuilderEntityTrait;
-    protected $table          = 'ec_categories';
-    protected $tableLang      = 'ec_categories_langs';
+    protected $table          = 'ec_suppliers';
+    protected $tableLang      = 'ec_suppliers_langs';
     protected $primaryKey     = 'id';
-    protected $primaryKeyLang = 'category_id';
+    protected $primaryKeyLang = 'supplier_id';
+
+    protected $attributes = [
+        'id' => null,
+        'name' => null,   
+        'created_at' => null,
+        'updated_at' => null,
+        'deleted_at' => null,
+    ];
+
 
     protected $datamap = [];
     /**
@@ -25,19 +34,6 @@ class Category extends Entity
     protected $casts = [];
 
     
-    public function _prepareLang()
-    {
-        $lang = [];
-        if (!empty($this->id)) {
-            foreach ($this->{$this->tableLang} as $tabs_lang) {
-                $lang[$tabs_lang->id_lang] = $tabs_lang;
-            }
-        }
-        return $lang;
-    }
-
-
-    
     public function saveLang(array $data, int $key)
     {
         //print_r($data);
@@ -49,7 +45,7 @@ class Category extends Entity
                 $data = [
                     $this->primaryKeyLang => $key,
                     'id_lang'             => $k,
-                    'name'                => $v['name'],
+                    'description'         => $v['description'],
                     'description_short'   => $v['description_short'],
                     'meta_title'          => $v['meta_title'],
                     'meta_description'    => $v['meta_description'],
@@ -60,7 +56,7 @@ class Category extends Entity
                 $data = [
                     $this->primaryKeyLang => $this->tableLang->{$this->primaryKeyLang},
                     'id_lang'             => $this->tableLang->id_lang,
-                    'name'                => $v['name'],
+                    'description'                => $v['description'],
                     'description_short'   => $v['description_short'],
                     'meta_title'          => $v['meta_title'],
                     'meta_description'    => $v['meta_description'],

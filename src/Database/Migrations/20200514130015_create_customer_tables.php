@@ -180,21 +180,24 @@ class Migration_create_customer_tables extends Migration
         $this->forge->addField([
             'id'                  => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
             'id_category_default' => ['type' => 'int',  'constraint' => 11, 'default' => 1],
-            'id_location'         => ['type' => 'int',  'constraint' => 11, 'default' => 1],
-            'id_supplier'         => ['type' => 'int',  'constraint' => 11, 'default' => 1],
-            'id_manufacturer'     => ['type' => 'int',  'constraint' => 11, 'default' => 1],
-            'id_taxe'             => ['type' => 'int',  'constraint' => 11, 'default' => 1],
-            'sku'                 => ['type' => 'VARCHAR',  'constraint' => 255],
+            'shop_id'             => ['type' => 'int',  'constraint' => 11, 'default' => 1],
+            'supplier_id'         => ['type' => 'int',  'constraint' => 11, 'default' => 1],
+            'brand_id'            => ['type' => 'int',  'constraint' => 11, 'default' => 1],
+            'taxe_rules_group_id' => ['type' => 'int',  'constraint' => 11, 'default' => 1],
+            'isbn'                => ['type' => 'VARCHAR',  'constraint' => 255],
             'ean13'               => ['type' => 'VARCHAR',  'constraint' => 13],
+            'upc'                 => ['type' => 'VARCHAR',  'constraint' => 48],
             'on_sale'             => ['type' => 'TINYINT',  'constraint' => 1],
+            'ecotax'              => ['type' => 'DECIMAL',  'constraint' => "17,6", 'default' => '0.000000'],
             'quantity'            => ['type' => 'INT',  'constraint' => 10],
             'quantity_minimal'    => ['type' => 'INT',  'constraint' => 10],
-            'price'               => ['type' => 'DECIMAL',  'constraint' => 20.6],
-            'wholesale_price'     => ['type' => 'DECIMAL',  'constraint' => 20.6],
-            'width'               => ['type' => 'DECIMAL',  'constraint' => 20.6],
-            'height'              => ['type' => 'DECIMAL',  'constraint' => 20.6],
-            'depth'               => ['type' => 'DECIMAL',  'constraint' => 20.6],
-            'weight'              => ['type' => 'DECIMAL',  'constraint' => 20.6],
+            'low_stock_alert'     => ['type' => 'TINYINT',  'constraint' => 1],
+            'price'               => ['type' => 'DECIMAL',  'constraint' => "20,6", 'default' => '0.000000'],
+            'wholesale_price'     => ['type' => 'DECIMAL',  'constraint' => "20,6", 'default' => '0.000000'],
+            'width'               => ['type' => 'DECIMAL',  'constraint' => "20,6", 'default' => '0.000000'],
+            'height'              => ['type' => 'DECIMAL',  'constraint' => "20,6", 'default' => '0.000000'],
+            'depth'               => ['type' => 'DECIMAL',  'constraint' => "20,6", 'default' => '0.000000'],
+            'weight'              => ['type' => 'DECIMAL',  'constraint' => "20,6", 'default' => '0.000000'],
             'active'              => ['type' => 'TINYINT',  'constraint' => 1],
             'created_at'          => ['type' => 'datetime', 'null' => true],
             'updated_at'          => ['type' => 'datetime', 'null' => true],
@@ -203,9 +206,10 @@ class Migration_create_customer_tables extends Migration
 
         $this->forge->addKey('id', true);
         $this->forge->addKey('id_category_default');
-        $this->forge->addKey('id_supplier');
-        $this->forge->addKey('id_manufacturer');
-        $this->forge->addKey('id_location');
+        $this->forge->addKey('supplier_id');
+        $this->forge->addKey('brand_id');
+        $this->forge->addKey('shop_id');
+        $this->forge->addKey('taxe_rules_group_id');
         $this->forge->addKey('created_at');
         $this->forge->addKey('deleted_at');
         $this->forge->createTable('ec_products', true);
@@ -262,6 +266,8 @@ class Migration_create_customer_tables extends Migration
             'id_lang'           => ['type' => 'INT', 'constraint' => 11],
             'name'              => ['type' => 'VARCHAR', 'constraint' => 255],
             'description_short' => ['type' => 'TEXT'],
+            'meta_title'        => ['type' => 'VARCHAR', 'constraint' => 255],
+            'meta_description'  => ['type' => 'VARCHAR', 'constraint' => 255],
             'slug'              => ['type' => 'VARCHAR', 'constraint' => 255],
         ];
 
@@ -280,9 +286,87 @@ class Migration_create_customer_tables extends Migration
         $this->forge->addForeignKey('product_id', 'ec_products', 'id', false, 'CASCADE');
         $this->forge->addForeignKey('category_id', 'ec_categories', 'id', false, false);
         $this->forge->createTable('ec_products_categories', true);
+
+
+
+        /*
+         * Product
+         */
+        /* MARQUES */
+        $fields = [
+            'id'         => ['type' => 'INT', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
+            'name'       => ['type' => 'VARCHAR', 'constraint' => 255],
+            'active'     => ['type' => 'INT', 'constraint' => 11, 'default' => 1],
+            'created_at' => ['type' => 'DATETIME', 'null' => true],
+            'updated_at' => ['type' => 'DATETIME', 'null' => true],
+            'deleted_at' => ['type' => 'DATETIME', 'null' => true],
+        ];
+
+        $this->forge->addField($fields);
+        $this->forge->addKey('id', true);
+        $this->forge->addKey('created_at');
+        $this->forge->addKey('updated_at');
+        $this->forge->addKey('deleted_at');
+        $this->forge->createTable('ec_brands');
+
+
+        $fields = [
+            'id_brand_lang' => ['type' => 'INT', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
+            'brand_id'      => ['type' => 'INT', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
+            'id_lang'              => ['type' => 'INT', 'constraint' => 11],
+            'description'          => ['type' => 'TEXT'],
+            'description_short'    => ['type' => 'TEXT'],
+            'meta_title'           => ['type' => 'VARCHAR', 'constraint' => 255],
+            'meta_description'     => ['type' => 'VARCHAR', 'constraint' => 255],
+            'slug'                 => ['type' => 'VARCHAR', 'constraint' => 255],
+        ];
+
+        $this->forge->addField($fields);
+        $this->forge->addKey('id_brand_lang', true);
+        $this->forge->addKey('id_lang');
+        $this->forge->addForeignKey('brand_id', 'ec_brands', 'id', false, 'CASCADE');
+        $this->forge->createTable('ec_brands_langs', true);
+
+
+         /*
+         * Product
+         */
+        /* Fournisseurs */
+        $fields = [
+            'id'         => ['type' => 'INT', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
+            'name'       => ['type' => 'VARCHAR', 'constraint' => 255],
+            'active'     => ['type' => 'INT', 'constraint' => 11, 'default' => 1],
+            'created_at' => ['type' => 'DATETIME', 'null' => true],
+            'updated_at' => ['type' => 'DATETIME', 'null' => true],
+            'deleted_at' => ['type' => 'DATETIME', 'null' => true],
+        ];
+
+        $this->forge->addField($fields);
+        $this->forge->addKey('id', true);
+        $this->forge->addKey('created_at');
+        $this->forge->addKey('updated_at');
+        $this->forge->addKey('deleted_at');
+        $this->forge->createTable('ec_suppliers');
+
+
+        $fields = [
+            'id_supplier_lang'  => ['type' => 'INT', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
+            'supplier_id'       => ['type' => 'INT', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
+            'id_lang'           => ['type' => 'INT', 'constraint' => 11],
+            'description'       => ['type' => 'TEXT'],
+            'description_short' => ['type' => 'TEXT'],
+            'meta_title'        => ['type' => 'VARCHAR', 'constraint' => 255],
+            'meta_description'  => ['type' => 'VARCHAR', 'constraint' => 255],
+            'slug'              => ['type' => 'VARCHAR', 'constraint' => 255],
+        ];
+
+        $this->forge->addField($fields);
+        $this->forge->addKey('id_supplier_lang', true);
+        $this->forge->addKey('id_lang');
+        $this->forge->addForeignKey('supplier_id', 'ec_suppliers', 'id', false, 'CASCADE');
+        $this->forge->createTable('ec_suppliers_langs', true);
+
     }
-
-
 
 
 
@@ -316,6 +400,14 @@ class Migration_create_customer_tables extends Migration
         $this->forge->dropTable('ec_products_langs', true);
         $this->forge->dropTable('ec_categories', true);
         $this->forge->dropTable('ec_categories_langs', true);
-        $this->forge->dropTable('ec_products_category', true);
+        $this->forge->dropTable('ec_products_categories', true);
+        $this->forge->dropTable('ec_brands', true);
+        $this->forge->dropTable('ec_brands_langs', true); 
+        $this->forge->dropTable('ec_suppliers', true);
+        $this->forge->dropTable('ec_suppliers_langs', true);
+
+
+        
+        
     }
 }

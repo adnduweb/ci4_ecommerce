@@ -8,6 +8,11 @@ use App\Libraries\Tools;
 use Adnduweb\Ci4_ecommerce\Entities\Product;
 use Adnduweb\Ci4_ecommerce\Models\ProductModel;
 use Adnduweb\Ci4_ecommerce\Models\CategoryModel;
+use Adnduweb\Ci4_ecommerce\Models\BrandModel;
+use Adnduweb\Ci4_ecommerce\Models\SupplierModel;
+use App\Models\CurrencyModel;
+use App\Models\TaxeModel;
+use \CodeIgniter\Test\Fabricator;
 
 /**
  * Class Article
@@ -29,17 +34,18 @@ class AdminProductController extends AdminController
      * @var \Adnduweb\Ci4_ecommerce\Models\CategoryModel
      */
     private $category_model;
-
-    public $module = true;
-    public $name_module = 'ecommerce';
     protected $idModule;
-    public $controller = 'ecommerce';
-    public $item = 'ecommerce';
-    public $type = 'Adnduweb/Ci4_ecommerce';
+    public $module          = true;
+    public $name_module     = 'ecommerce';
+    public $controller      = 'ecommerce';
+    public $item            = 'ecommerce';
+    public $type            = 'Adnduweb/Ci4_ecommerce';
     public $pathcontroller  = '/ecommerce/catalogue/product';
-    public $fieldList = 'ec_product.id_product';
-    public $add = true;
-    public $multilangue = true;
+    public $fieldList       = 'ec_products.id';
+    public $add             = true;
+    public $fake            = true;
+    public $multilangue     = true;
+    public $changeCategorie = true;
 
     /**
      * Article constructor.
@@ -48,17 +54,21 @@ class AdminProductController extends AdminController
      */
     public function __construct()
     {
+        helper('number');
         parent::__construct();
         $this->tableModel       = new ProductModel();
         $this->category_model = new CategoryModel();
         $this->module           = "blog";
         $this->idModule         = $this->getIdModule();
+        $this->data['currencyDefault']  = (new CurrencyModel())->find(service('settings')->setting_devise_default);
+        $this->data['taxes']  = (new TaxeModel())->findAll();
     }
 
 
     public function renderViewList()
     {
         AssetsBO::add_js([$this->get_current_theme_view('controllers/' . $this->controller . '/js/listProduct.js', 'default')]);
+        $this->data['categories'] = $this->category_model->getAllCategoriesOptionParent();
         $parent =  parent::renderViewList();
         if (is_object($parent) && $parent->getStatusCode() == 307) {
             return $parent;
@@ -71,7 +81,7 @@ class AdminProductController extends AdminController
     public function ajaxProcessList()
     {
         $parent = parent::ajaxProcessList();
-        return $this->respond($parent, 200, lang('Core.liste des articles'));
+        return $this->respond($parent, 200, lang('Core.liste des produits'));
     }
 
     public function renderForm($id = null)
@@ -83,23 +93,26 @@ class AdminProductController extends AdminController
         if (is_null($id)) {
             $this->data['form'] = new Product($this->request->getPost());
         } else {
-            $this->data['form'] = $this->tableModel->where('id_product', $id)->first();
+            $this->data['form'] = $this->tableModel->where('id', $id)->first();
             if (empty($this->data['form'])) {
                 Tools::set_message('danger', lang('Core.not_{0}_exist', [$this->item]), lang('Core.warning_error'));
-                return redirect()->to('/' . env('CI_SITE_AREA') . '/' . $this->pathcontroller);
+                return redirect()->to('/' . env('CI_SITE_AREA') . $this->pathcontroller);
             }
         }
         $this->data['form']->allCategories = $this->category_model->getAllCategoriesOptionParent();
-        $this->data['form']->categories =  $this->category_model->getlist();
-        $this->data['form']->getCatByArt = $this->tableModel->getCatByArt($id);
+        $this->data['form']->categories    = $this->category_model->getlist();
+        $this->data['brands']              = (new BrandModel())->findAll();
+        $this->data['suppliers']           = (new SupplierModel())->findAll();
+        //$this->data['form']->getCatByProduct = $this->tableModel->getCatByProduct($id);
 
         parent::renderForm($id);
-        $this->data['edit_title'] = lang('Core.edit_article');
+        $this->data['edit_title'] = lang('Core.edit_product');
         return view($this->get_current_theme_view('form', 'Adnduweb/Ci4_ecommerce'), $this->data);
     }
 
     public function postProcessEdit($param)
     {
+        
         $this->validation->setRules(['lang.1.slug' => 'required']);
         if (!$this->validation->run($this->request->getPost())) {
             Tools::set_message('danger', $this->validation->getErrors(), lang('Core.warning_error'));
@@ -111,6 +124,9 @@ class AdminProductController extends AdminController
         $this->lang = $this->request->getPost('lang');
         $productBase->id_category = $productBase->id_category_default;
         $productBase->id_category_default = $productBase->id_category_default[0];
+        $productBase->shop_id = 1;
+        $productBase->price = ps_round($productBase->price,2);
+        //$productBase->price = number_to_currency($productBase->price, 'USD', null, 2);
 
         // Les images
         $productBase->picture_one = $this->getImagesPrep($productBase->getPictureOneAtt());
@@ -127,7 +143,7 @@ class AdminProductController extends AdminController
         $productBase->saveCategorie($productBase);
 
         // On enregistre les langues
-        $productBase->saveLang($this->lang, $productBase->id_product);
+        $productBase->saveLang($this->lang, $productBase->{$this->tableModel->primaryKey});
 
         // On enregistre le Builder si existe
         $this->saveBuilder($this->request->getPost('builder'));
@@ -136,10 +152,10 @@ class AdminProductController extends AdminController
         // Success!
         Tools::set_message('success', lang('Core.save_data'), lang('Core.cool_success'));
         $redirectAfterForm = [
-            'url'                   => '/' . env('CI_SITE_AREA') . '/' . $this->pathcontroller,
+            'url'                   => '/' . env('CI_SITE_AREA') . $this->pathcontroller,
             'action'                => 'edit',
             'submithandler'         => $this->request->getPost('submithandler'),
-            'id'                    => $productBase->id_product,
+            'id'                    => $productBase->{$this->tableModel->primaryKey},
         ];
         $this->redirectAfterForm($redirectAfterForm);
     }
@@ -158,11 +174,13 @@ class AdminProductController extends AdminController
         $this->lang = $this->request->getPost('lang');
         $productBase->id_category = $productBase->id_category_default;
         $productBase->id_category_default = $productBase->id_category_default[0];
+        $productBase->shop_id = 1;
 
         // Les images
         $productBase->picture_one = $this->getImagesPrep($productBase->getPictureOneAtt());
         $productBase->picture_header = $this->getImagesPrep($productBase->getPictureheaderAtt());
 
+        // print_r($this->tableModel->save($productBase));
         // print_r($productBase);
         // exit;
 
@@ -171,7 +189,7 @@ class AdminProductController extends AdminController
             return redirect()->back()->withInput();
         }
         $id_product = $this->tableModel->insertID();
-        $productBase->id_product = $id_product;
+        $productBase->id = $id_product;
 
         // On enregistre les categories
         $productBase->saveCategorie($productBase);
@@ -183,7 +201,7 @@ class AdminProductController extends AdminController
         // Success!
         Tools::set_message('success', lang('Core.save_data'), lang('Core.cool_success'));
         $redirectAfterForm = [
-            'url'                   => '/' . env('CI_SITE_AREA') . '/' . $this->pathcontroller,
+            'url'                   => '/' . env('CI_SITE_AREA') . $this->pathcontroller,
             'action'                => 'add',
             'submithandler'         => $this->request->getPost('submithandler'),
             'id'                    => $id_product,
@@ -244,13 +262,13 @@ class AdminProductController extends AdminController
                 foreach ($value['selected'] as $selected) {
 
                     $data[] = [
-                        'id_product' => $selected,
+                        'id' => $selected,
                         'active'     => $value['active'],
                     ];
                 }
             }
 
-            if ($this->tableModel->updateBatch($data, 'id_product')) {
+            if ($this->tableModel->updateBatch($data, 'id')) {
                 return $this->respond(['status' => true, 'message' => lang('Js.your_seleted_records_statuses_have_been_updated')], 200);
             } else {
                 return $this->respond(['status' => false, 'database' => true, 'display' => 'modal', 'message' => lang('Js.aucun_enregistrement_effectue')], 200);
@@ -271,5 +289,54 @@ class AdminProductController extends AdminController
             }
         }
         die(1);
+    }
+
+    public function ajaxProcessChangeCategorie()
+    {
+        if ($value = $this->request->getPost('value')) {
+            $data = [];
+            // print_r($value); exit;
+
+            $categorie         = $value['categorie'];
+            $categorieOriginal = $value['categorieOriginal'];
+            $newCategorieOriginal = [];
+            if (strpos($categorieOriginal, ',') == true) {
+                $newCategorieOriginal = explode(',', $categorieOriginal);
+            } else {
+                $newCategorieOriginal = (array) $categorieOriginal;
+            }
+            // print_r($newCategorieOriginal); exit;
+            if (is_array($newCategorieOriginal)) {
+                foreach ($newCategorieOriginal as $categorieO) {
+                    $data[] = [
+                        'id_product'    => $categorieO,
+                        'new_categorie_id' => $categorie,
+                    ];
+                }
+            }
+            //print_r($data); exit;
+            $this->tableModel->updatePostCategorie($data);
+            return $this->respond(['status' => true, 'type' => 'success', 'message' => lang('Js.your_seleted_records_statuses_have_been_updated')], 200);
+        }
+    }
+
+
+    /**
+     * 
+     * Fake Product
+     */
+    public function fake(int $num = 10)
+    {
+
+        $fabricator = new Fabricator($this->tableModel);
+        $makeArticle   = $fabricator->make($num);
+        $products = $fabricator->create($num);
+        if (!empty($products)) {
+            foreach ($products as $product) {
+                $this->tableModel->fakelang($product->id);
+            }
+        }
+        Tools::set_message('success', lang('Core.fakedata'), lang('Core.cool_success'));
+        return redirect()->to('/' . CI_SITE_AREA . $this->pathcontroller);
     }
 }

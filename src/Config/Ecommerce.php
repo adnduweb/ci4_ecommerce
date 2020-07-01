@@ -11,4 +11,13 @@ class Ecommerce extends BaseConfig
     public $authFaceBook = true;
 
     public $authLayer = true;
+
+    public $newProduct = 15 * DAY;
+
+    public $precisionDecimal = 2;
+
+    public $pagination = 10;
+
+    public $add_to_cart_listing = false;
+
 }

@@ -34,12 +34,13 @@ class EmailActivator extends BaseActivator implements ActivatorInterface
 
         $settings = $this->getActivatorSettings();
 
-        $sent = $email->setFrom($settings->fromEmail ?? $config->fromEmail, $settings->fromName ?? $config->fromName)
+        $sent = $email->setFrom(service('Settings')->setting_email_fromEmail, service('Settings')->setting_email_fromName)
             ->setTo($customer->email)
             ->setSubject(lang('Authcustomer.activationSubject'))
             ->setMessage(view($template, ['hash' => $customer->activate_hash]))
             ->setMailType('html')
             ->send();
+
 
         if (!$sent) {
             $this->error = lang('Authcustomer.errorSendingActivation', [$customer->email]);

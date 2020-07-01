@@ -53,6 +53,8 @@ class EcommerceSeeder extends \CodeIgniter\Database\Seeder
                 'id_lang'           => 1,
                 'name'              => 'Défaut',
                 'description_short' => $lipsum->sentence(),
+                'meta_title'        => $lipsum->sentence(),
+                'meta_description'  => $lipsum->sentence(),
                 'slug'              => 'default'
             ]
 
@@ -159,6 +161,56 @@ class EcommerceSeeder extends \CodeIgniter\Database\Seeder
             ],
         ];
 
+        $rowsManTabs = [
+            'depth'             => 3,
+            'left'              => 15,
+            'right'             => 16,
+            'position'          => 4,
+            'section'           => 0,
+            'module'            => 'Adnduweb\Ci4_ecommerce',
+            'class_name'        => 'AdminBrand',
+            'active'            =>  1,
+            'icon'              => '',
+            'slug'             => 'catalogue/brand',
+            'name_controller'       => ''
+        ];
+
+        $rowsManTabsLangs = [
+            [
+                'id_lang'         => 1,
+                'name'             => 'marques',
+            ],
+            [
+                'id_lang'         => 2,
+                'name'             => 'brands',
+            ],
+        ];
+
+        $rowsSuppliersTabs = [
+            'depth'             => 3,
+            'left'              => 15,
+            'right'             => 16,
+            'position'          => 4,
+            'section'           => 0,
+            'module'            => 'Adnduweb\Ci4_ecommerce',
+            'class_name'        => 'AdminSupplier',
+            'active'            =>  1,
+            'icon'              => '',
+            'slug'             => 'catalogue/supplier',
+            'name_controller'       => ''
+        ];
+
+        $rowsSuppliersTabsLangs = [
+            [
+                'id_lang'         => 1,
+                'name'             => 'fournisseurs',
+            ],
+            [
+                'id_lang'         => 2,
+                'name'             => 'supplier',
+            ],
+        ];
+
 
         $tabBlog = $db->table('tabs')->where('class_name', $rowsBlogTabs['class_name'])->get()->getRow();
         //print_r($tab); exit;
@@ -207,6 +259,40 @@ class EcommerceSeeder extends \CodeIgniter\Database\Seeder
                     $i++;
                 }
             }
+
+            // On Insére les brands
+            $tabCategorie = $db->table('tabs')->where('class_name', $rowsManTabs['class_name'])->get()->getRow();
+            //print_r($tab); exit;
+            if (empty($tabCategorie)) {
+                // No setting - add the row
+                $rowsManTabs['id_parent']  = $newInsert;
+                $db->table('tabs')->insert($rowsManTabs);
+                $newInsertCat = $db->insertID();
+                $i = 0;
+                foreach ($rowsManTabsLangs as $rowLang) {
+                    $rowLang['tab_id']   = $newInsertCat;
+                    // No setting - add the row
+                    $db->table('tabs_langs')->insert($rowLang);
+                    $i++;
+                }
+            }
+
+             // On Insére les suppliers
+             $tabCategorie = $db->table('tabs')->where('class_name', $rowsSuppliersTabs['class_name'])->get()->getRow();
+             //print_r($tab); exit;
+             if (empty($tabCategorie)) {
+                 // No setting - add the row
+                 $rowsSuppliersTabs['id_parent']  = $newInsert;
+                 $db->table('tabs')->insert($rowsSuppliersTabs);
+                 $newInsertCat = $db->insertID();
+                 $i = 0;
+                 foreach ($rowsSuppliersTabsLangs as $rowLang) {
+                     $rowLang['tab_id']   = $newInsertCat;
+                     // No setting - add the row
+                     $db->table('tabs_langs')->insert($rowLang);
+                     $i++;
+                 }
+             }
         }
 
 
