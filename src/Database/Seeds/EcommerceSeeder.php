@@ -13,27 +13,6 @@ class EcommerceSeeder extends \CodeIgniter\Database\Seeder
     function run()
     {
 
-        $rowsGroups = [
-            [
-                'id'                => 1,
-                'name'              => 'default',
-                'description'       => 'default',
-                'login_destination' => 'dashboard',
-                'created_at'        => date('Y-m-d H:i:s'),
-                'updated_at'        => date('Y-m-d H:i:s'),
-            ],
-
-        ];
-
-        // on insrére les groupes par défault
-        $db = \Config\Database::connect();
-        foreach ($rowsGroups as $row) {
-            $tabRow =  $db->table('authf_groups')->where('name', $row['name'])->get()->getRow();
-            if (empty($tabRow)) {
-                // No langue - add the row
-                $db->table('authf_groups')->insert($row);
-            }
-        }
 
         $lipsum = new LoremIpsum();
         // Define default project setting templates

@@ -6,18 +6,25 @@ use CodeIgniter\Config\BaseConfig;
 
 class Ecommerce extends BaseConfig
 {
-    public $authGoogle = true;
 
-    public $authFaceBook = true;
-
-    public $authLayer = true;
-
+    //--------------------------------------------------------------------
+    // Délai des Nouveaux produits sur le front
+    //--------------------------------------------------------------------
     public $newProduct = 15 * DAY;
 
+    //--------------------------------------------------------------------
+    // Décimal ds tarifs des produits
+    //--------------------------------------------------------------------
     public $precisionDecimal = 2;
 
-    public $pagination = 10;
+    //--------------------------------------------------------------------
+    // Nombre de produits par page
+    //--------------------------------------------------------------------
+    public $pagination = 12;
 
+    //--------------------------------------------------------------------
+    // Activation de l'ajout des produits sur les pages catégories
+    //--------------------------------------------------------------------
     public $add_to_cart_listing = false;
 
 }

@@ -39,13 +39,6 @@
     }
 
     //E-commerce
-    $routes->get($locale . '/logout', 'FrontAuthenticationController::logout', ['namespace' => '\Adnduweb\Ci4_ecommerce\Controllers\Front', 'as' => 'logout-customer']);
-    $routes->get($locale . '/signin', 'FrontAuthenticationController::SignIn', ['namespace' => '\Adnduweb\Ci4_ecommerce\Controllers\Front', 'as' => 'signin']);
-    $routes->post($locale . '/signin', 'FrontAuthenticationController::postProcessSignIn', ['namespace' => '\Adnduweb\Ci4_ecommerce\Controllers\Front']);
-    $routes->get($locale . '/signup', 'FrontAuthenticationController::SignUp', ['namespace' => '\Adnduweb\Ci4_ecommerce\Controllers\Front']);
-    $routes->post($locale . '/signup', 'FrontAuthenticationController::postProcessSignUp', ['namespace' => '\Adnduweb\Ci4_ecommerce\Controllers\Front']);
-    $routes->get($locale . '/activate-account-customer', 'FrontAuthenticationController::ActivateAccount', ['namespace' => '\Adnduweb\Ci4_ecommerce\Controllers\Front']);
-    $routes->get($locale . '/my-account', 'FrontAccountController::index', ['namespace' => '\Adnduweb\Ci4_ecommerce\Controllers\Front', 'filter' => 'loginCustomer']);
     $routes->get($locale . '/shopping-cart', 'FrontShoppingCartController::ShoppingCart', ['namespace' => '\Adnduweb\Ci4_ecommerce\Controllers\Front']);
 
     $routes->get($locale . '/boutique', 'FrontShopController::index', ['namespace' => '\Adnduweb\Ci4_ecommerce\Controllers\Front']);

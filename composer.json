@@ -17,6 +17,7 @@
     }],
     "require": {
         "php": "^7.2",
+        "adnduweb/ci4_customer": "^1",
         "adnduweb/ci4_page": "^1"
     },
     "require-dev": {
