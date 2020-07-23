@@ -26,26 +26,27 @@ class CategoryModel extends Model
      */
     private $categories;
 
-    protected $afterInsert         = ['auditInsert'];
-    protected $afterUpdate         = ['auditUpdate'];
-    protected $afterDelete         = ['auditDelete'];
-    protected $table               = 'ec_categories';
-    protected $tableLang           = 'ec_categories_langs';
-    protected $primaryKey          = 'id';
-    protected $primaryKeyLang      = 'category_id';
-    protected $tableP               = 'ec_products';
-    protected $tablePLang           = 'ec_products_langs';
-    protected $primaryKeyP          = 'id';
-    protected $primaryKeyPLang      = 'product_id';
-    protected $with                = ['ec_categories_langs'];
-    protected $without             = [];
-    protected $returnType          = Category::class;
-    protected $useSoftDeletes      = true;
-    protected $allowedFields       = ['id_parent', 'active', 'order'];
-    protected $useTimestamps       = true;
-    protected $validationRules     = [];
-    protected $validationMessages  = [];
-    protected $skipValidation      = false;
+    protected $afterInsert        = ['auditInsert'];
+    protected $afterUpdate        = ['auditUpdate'];
+    protected $afterDelete        = ['auditDelete'];
+    protected $table              = 'ec_categories';
+    protected $tableLang          = 'ec_categories_langs';
+    protected $primaryKey         = 'id';
+    protected $primaryKeyLang     = 'category_id';
+    protected $tableP             = 'ec_products';
+    protected $tablePLang         = 'ec_products_langs';
+    protected $primaryKeyP        = 'id';
+    protected $primaryKeyPLang    = 'product_id';
+    protected $with               = ['ec_categories_langs'];
+    protected $without            = [];
+    protected $returnType         = Category::class;
+    protected $localizeFile       = 'Adnduweb\Ci4_ecommerce\Models\CategoryModel';
+    protected $useSoftDeletes     = true;
+    protected $allowedFields      = ['id_parent', 'active', 'order'];
+    protected $useTimestamps      = true;
+    protected $validationRules    = [];
+    protected $validationMessages = [];
+    protected $skipValidation     = false;
     protected $searchKtDatatable  = ['name', 'description_short', 'created_at'];
  
     /**

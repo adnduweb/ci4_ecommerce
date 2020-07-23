@@ -64,18 +64,17 @@ class EcommerceSeeder extends \CodeIgniter\Database\Seeder
 
         // gestionde l'application
         $rowsBlogTabs = [
-            'id_parent'         => 20,
-            'depth'             => 2,
-            'left'              => 11,
-            'right'             => 19,
-            'position'          => 1,
-            'section'           => 0,
-            'module'            => 'Adnduweb\Ci4_ecommerce',
-            'class_name'        => 'AdminEcommerce',
-            'active'            =>  1,
-            'icon'              => '',
-            'slug'             => 'catalogue',
-            'name_controller'       => ''
+            'id_parent'       => 20,
+            'depth'           => 2,
+            'left'            => 11,
+            'right'           => 19,
+            'position'        => 1,
+            'section'         => 0,
+            'namespace'       => 'Adnduweb\Ci4_ecommerce',
+            'class_name'      => '',
+            'active'          => 1,
+            'icon'            => '',
+            'slug'            => 'catalogue',
         ];
 
         $rowsBlogTabsLangs = [
@@ -91,17 +90,16 @@ class EcommerceSeeder extends \CodeIgniter\Database\Seeder
 
 
         $rowsArticlesTabs = [
-            'depth'             => 3,
-            'left'              => 12,
-            'right'             => 13,
-            'position'          => 1,
-            'section'           => 0,
-            'module'            => 'Adnduweb\Ci4_ecommerce',
-            'class_name'        => 'AdminProduct',
-            'active'            =>  1,
-            'icon'              => '',
-            'slug'             => 'catalogue/product',
-            'name_controller'       => ''
+            'depth'           => 3,
+            'left'            => 12,
+            'right'           => 13,
+            'position'        => 1,
+            'section'         => 0,
+            'namespace'       => 'Adnduweb\Ci4_ecommerce',
+            'class_name'      => 'product',
+            'active'          => 1,
+            'icon'            => '',
+            'slug'            => 'catalogue/product',
         ];
 
         $rowsArticlesTabsLangs = [
@@ -116,17 +114,16 @@ class EcommerceSeeder extends \CodeIgniter\Database\Seeder
         ];
 
         $rowsCatTabs = [
-            'depth'             => 3,
-            'left'              => 14,
-            'right'             => 15,
-            'position'          => 1,
-            'section'           => 0,
-            'module'            => 'Adnduweb\Ci4_ecommerce',
-            'class_name'        => 'AdminCategory',
-            'active'            =>  1,
-            'icon'              => '',
-            'slug'             => 'catalogue/category',
-            'name_controller'       => ''
+            'depth'           => 3,
+            'left'            => 14,
+            'right'           => 15,
+            'position'        => 1,
+            'section'         => 0,
+            'namespace'       => 'Adnduweb\Ci4_ecommerce',
+            'class_name'      => 'category',
+            'active'          => 1,
+            'icon'            => '',
+            'slug'            => 'catalogue/category',
         ];
 
         $rowsCatTabsLangs = [
@@ -141,17 +138,16 @@ class EcommerceSeeder extends \CodeIgniter\Database\Seeder
         ];
 
         $rowsManTabs = [
-            'depth'             => 3,
-            'left'              => 15,
-            'right'             => 16,
-            'position'          => 4,
-            'section'           => 0,
-            'module'            => 'Adnduweb\Ci4_ecommerce',
-            'class_name'        => 'AdminBrand',
-            'active'            =>  1,
-            'icon'              => '',
-            'slug'             => 'catalogue/brand',
-            'name_controller'       => ''
+            'depth'      => 3,
+            'left'       => 15,
+            'right'      => 16,
+            'position'   => 4,
+            'section'    => 0,
+            'namespace'  => 'Adnduweb\Ci4_ecommerce',
+            'class_name' => 'brand',
+            'active'     => 1,
+            'icon'       => '',
+            'slug'       => 'catalogue/brand',
         ];
 
         $rowsManTabsLangs = [
@@ -166,17 +162,16 @@ class EcommerceSeeder extends \CodeIgniter\Database\Seeder
         ];
 
         $rowsSuppliersTabs = [
-            'depth'             => 3,
-            'left'              => 15,
-            'right'             => 16,
-            'position'          => 4,
-            'section'           => 0,
-            'module'            => 'Adnduweb\Ci4_ecommerce',
-            'class_name'        => 'AdminSupplier',
-            'active'            =>  1,
-            'icon'              => '',
-            'slug'             => 'catalogue/supplier',
-            'name_controller'       => ''
+            'depth'      => 3,
+            'left'       => 15,
+            'right'      => 16,
+            'position'   => 4,
+            'section'    => 0,
+            'namespace'  => 'Adnduweb\Ci4_ecommerce',
+            'class_name' => 'supplier',
+            'active'     => 1,
+            'icon'       => '',
+            'slug'       => 'catalogue/supplier',
         ];
 
         $rowsSuppliersTabsLangs = [
@@ -191,7 +186,7 @@ class EcommerceSeeder extends \CodeIgniter\Database\Seeder
         ];
 
 
-        $tabBlog = $db->table('tabs')->where('class_name', $rowsBlogTabs['class_name'])->get()->getRow();
+        $tabBlog = $db->table('tabs')->where('class_name', $rowsBlogTabs['class_name'])->where('namespace', $rowsBlogTabs['namespace'])->get()->getRow();
         //print_r($tab); exit;
         if (empty($tabBlog)) {
             // No setting - add the row
@@ -206,7 +201,7 @@ class EcommerceSeeder extends \CodeIgniter\Database\Seeder
             }
 
             // on insere les articles
-            $tabArticles = $db->table('tabs')->where('class_name', $rowsArticlesTabs['class_name'])->get()->getRow();
+            $tabArticles = $db->table('tabs')->where('class_name', $rowsArticlesTabs['class_name'])->where('namespace', $rowsArticlesTabs['namespace'])->get()->getRow();
             //print_r($tab); exit;
             if (empty($tabArticles)) {
                 // No setting - add the row
@@ -223,7 +218,7 @@ class EcommerceSeeder extends \CodeIgniter\Database\Seeder
             }
 
             // On Insére les categories
-            $tabCategorie = $db->table('tabs')->where('class_name', $rowsCatTabs['class_name'])->get()->getRow();
+            $tabCategorie = $db->table('tabs')->where('class_name', $rowsCatTabs['class_name'])->where('namespace', $rowsCatTabs['namespace'])->get()->getRow();
             //print_r($tab); exit;
             if (empty($tabCategorie)) {
                 // No setting - add the row
@@ -240,7 +235,7 @@ class EcommerceSeeder extends \CodeIgniter\Database\Seeder
             }
 
             // On Insére les brands
-            $tabCategorie = $db->table('tabs')->where('class_name', $rowsManTabs['class_name'])->get()->getRow();
+            $tabCategorie = $db->table('tabs')->where('class_name', $rowsManTabs['class_name'])->where('namespace', $rowsManTabs['namespace'])->get()->getRow();
             //print_r($tab); exit;
             if (empty($tabCategorie)) {
                 // No setting - add the row
@@ -257,7 +252,7 @@ class EcommerceSeeder extends \CodeIgniter\Database\Seeder
             }
 
              // On Insére les suppliers
-             $tabCategorie = $db->table('tabs')->where('class_name', $rowsSuppliersTabs['class_name'])->get()->getRow();
+             $tabCategorie = $db->table('tabs')->where('class_name', $rowsSuppliersTabs['class_name'])->where('namespace', $rowsSuppliersTabs['namespace'])->get()->getRow();
              //print_r($tab); exit;
              if (empty($tabCategorie)) {
                  // No setting - add the row
@@ -281,7 +276,7 @@ class EcommerceSeeder extends \CodeIgniter\Database\Seeder
          */
         $rowsPermissionsEcommerce = [
             [
-                'name'              => 'EC_Product::views',
+                'name'              => 'EC_Product::view',
                 'description'       => 'Voir les Produits',
                 'is_natif'          => '0',
             ],
@@ -301,7 +296,7 @@ class EcommerceSeeder extends \CodeIgniter\Database\Seeder
                 'is_natif'          => '0',
             ],
             [
-                'name'              => 'EC_categories::views',
+                'name'              => 'EC_categories::view',
                 'description'       => 'Voir les categories',
                 'is_natif'          => '0',
             ],

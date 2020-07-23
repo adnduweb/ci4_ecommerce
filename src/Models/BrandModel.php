@@ -26,26 +26,27 @@ class BrandModel extends Model
      */
     private $brands;
 
-    protected $afterInsert         = ['auditInsert'];
-    protected $afterUpdate         = ['auditUpdate'];
-    protected $afterDelete         = ['auditDelete'];
-    protected $table               = 'ec_brands';
-    protected $tableLang           = 'ec_brands_langs';
-    protected $primaryKey          = 'id';
-    protected $primaryKeyLang      = 'brand_id';
-    protected $tableP               = 'ec_products';
-    protected $tablePLang           = 'ec_products_langs';
-    protected $primaryKeyP          = 'id';
-    protected $primaryKeyPLang      = 'product_id';
-    protected $with                = ['ec_brands_langs'];
-    protected $without             = [];
-    protected $returnType          = Brand::class;
-    protected $useSoftDeletes      = true;
-    protected $allowedFields       = ['name', 'active'];
-    protected $useTimestamps       = true;
-    protected $validationRules     = [];
-    protected $validationMessages  = [];
-    protected $skipValidation      = false;
+    protected $afterInsert        = ['auditInsert'];
+    protected $afterUpdate        = ['auditUpdate'];
+    protected $afterDelete        = ['auditDelete'];
+    protected $table              = 'ec_brands';
+    protected $tableLang          = 'ec_brands_langs';
+    protected $primaryKey         = 'id';
+    protected $primaryKeyLang     = 'brand_id';
+    protected $tableP             = 'ec_products';
+    protected $tablePLang         = 'ec_products_langs';
+    protected $primaryKeyP        = 'id';
+    protected $primaryKeyPLang    = 'product_id';
+    protected $with               = ['ec_brands_langs'];
+    protected $without            = [];
+    protected $returnType         = Brand::class;
+    protected $localizeFile       = 'Adnduweb\Ci4_ecommerce\Models\BrandModel';
+    protected $useSoftDeletes     = true;
+    protected $allowedFields      = ['name', 'active'];
+    protected $useTimestamps      = true;
+    protected $validationRules    = [];
+    protected $validationMessages = [];
+    protected $skipValidation     = false;
     protected $searchKtDatatable  = ['name', 'description_short', 'created_at'];
  
     /**

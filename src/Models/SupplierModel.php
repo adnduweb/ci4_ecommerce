@@ -40,6 +40,7 @@ class SupplierModel extends Model
     protected $with               = ['ec_suppliers_langs'];
     protected $without            = [];
     protected $returnType         = Supplier::class;
+    protected $localizeFile       = 'Adnduweb\Ci4_ecommerce\Models\SupplierModel';
     protected $useSoftDeletes     = true;
     protected $allowedFields      = ['name', 'active'];
     protected $useTimestamps      = true;

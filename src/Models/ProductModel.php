@@ -40,6 +40,7 @@ class ProductModel extends Model
     protected $without         = [];
     protected $primaryKey      = 'id';
     protected $returnType      = Product::class;
+    protected $localizeFile    = 'Adnduweb\Ci4_ecommerce\Models\ProductModel';
     protected $useSoftDeletes  = false;
     protected $allowedFields   = [
         'id_category_default', 'shop_id', 'supplier_id', 'brand_id', 'taxe_rules_group_id', 'isbn', 'ean13', 'upc', 'on_sale', 'ecotax', 'quantity', 'quantity_minimal', 'price', 'wholesale_price',
