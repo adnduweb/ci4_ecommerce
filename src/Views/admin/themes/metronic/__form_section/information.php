@@ -1,14 +1,14 @@
-<div class="row">
+<!-- <div class="row">
     <label class="col-xl-3"></label>
     <div class="col-lg-9 col-xl-6">
         <h3 class="kt-section__title kt-section__title-sm"><?= lang('Core.detail'); ?>:</h3>
     </div>
-</div>
+</div> -->
 
 <div class="form-group form-group-sm row">
     <label class="col-xl-3 col-lg-3 col-form-label"><?= ucfirst(lang('Core.on_sale')); ?></label>
     <div class="col-lg-9 col-xl-6">
-        <span class="kt-switch kt-switch--icon">
+        <span class="switch switch-icon">
             <label>
                 <input type="checkbox" <?= ($form->on_sale == true) ? 'checked="checked"' : ''; ?> name="on_sale" value="1">
                 <span></span>

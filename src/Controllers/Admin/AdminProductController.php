@@ -22,33 +22,83 @@ use \CodeIgniter\Test\Fabricator;
 class AdminProductController extends AdminController
 {
 
-    use \App\Traits\BuilderModelTrait;
-    use \App\Traits\ModuleTrait;
+    use \App\Traits\BuilderModelTrait, \App\Traits\ModuleTrait;
+
+
+        /**
+     *  Module Object
+     */
+    public $module = true;
 
     /**
-     * @var \Adnduweb\Ci4_ecommerce\Models\ProductModel
+     * name controller
+     */
+    public $controller = 'product';
+
+    /**
+     * Localize slug
+     */
+    public $pathcontroller  = '/catalogue/product';
+
+    /**
+     * Localize namespace
+     */
+    public $namespace = 'Adnduweb/Ci4_ecommerce';
+
+    /**
+     * Id Module
+     */
+    protected $idModule;
+
+    /**
+     * Localize slug
+     */
+    public $dirList  = 'ecommerce';
+
+    /**
+     * Display default list column
+     */
+    public $fieldList = 'ec_products.id';
+
+    /**
+     * Bouton add
+     */
+    public $add = true;
+
+    /**
+     * Display Multilangue
+     */
+    public $multilangue = true;
+
+    /**
+     * Event fake data
+     */
+    public $fake = true;
+
+    /**
+     * Update item List
+     */
+    public $toolbarUpdate = true;
+
+    /**
+     * Change Categorie
+     */
+    public $changeCategorie = true;
+
+
+    /**
+     * @var Adnduweb\Ci4_ecommerce\Models\ProductModel
      */
     public $tableModel;
 
     /**
-     * @var \Adnduweb\Ci4_ecommerce\Models\CategoryModel
+     * @var Adnduweb\Ci4_ecommerce\Models\CategoryModel
      */
-    private $category_model;
-    protected $idModule;
-    public $module          = true;
-    public $name_module     = 'ecommerce';
-    public $controller      = 'ecommerce';
-    public $item            = 'ecommerce';
-    public $type            = 'Adnduweb/Ci4_ecommerce';
-    public $pathcontroller  = '/ecommerce/catalogue/product';
-    public $fieldList       = 'ec_products.id';
-    public $add             = true;
-    public $fake            = true;
-    public $multilangue     = true;
-    public $changeCategorie = true;
+    public $category_model;
+
 
     /**
-     * Article constructor.
+     * Product constructor.
      *
      * @throws \CodeIgniter\Database\Exceptions\DatabaseException
      */
@@ -58,16 +108,19 @@ class AdminProductController extends AdminController
         parent::__construct();
         $this->tableModel       = new ProductModel();
         $this->category_model = new CategoryModel();
-        $this->module           = "blog";
         $this->idModule         = $this->getIdModule();
         $this->data['currencyDefault']  = (new CurrencyModel())->find(service('settings')->setting_devise_default);
         $this->data['taxes']  = (new TaxeModel())->findAll();
+
+        $this->data['paramJs']['baseSegmentAdmin'] = config('Ecommerce')->urlMenuAdmin;
+        $this->pathcontroller  = '/' . config('Ecommerce')->urlMenuAdmin . $this->pathcontroller;
+
     }
 
 
     public function renderViewList()
     {
-        AssetsBO::add_js([$this->get_current_theme_view('controllers/' . $this->controller . '/js/listProduct.js', 'default')]);
+        AssetsBO::add_js([$this->get_current_theme_view('controllers/' . $this->dirList . '/js/listProduct.js', 'default')]);
         $this->data['categories'] = $this->category_model->getAllCategoriesOptionParent();
         $parent =  parent::renderViewList();
         if (is_object($parent) && $parent->getStatusCode() == 307) {
@@ -88,6 +141,9 @@ class AdminProductController extends AdminController
     {
         AssetsBO::add_js([$this->get_current_theme_view('plugins/custom/ckeditor/ckeditor-classic.bundle.js', 'default')]);
         AssetsBO::add_js([$this->get_current_theme_view('controllers/medias/js/manager.js', 'default')]);
+      //  AssetsBO::add_js(['https://cdn.jsdelivr.net/npm/vue/dist/vue.js']);
+        AssetsBO::add_js(['admin/vuejs/products/dist/app.js'], 'vueJs'); 
+        //AssetsBO::add_js(['admin/vuejs/src/controllers/ecommerce/product.js'], 'vueJs');
 
 
         if (is_null($id)) {
@@ -95,7 +151,7 @@ class AdminProductController extends AdminController
         } else {
             $this->data['form'] = $this->tableModel->where('id', $id)->first();
             if (empty($this->data['form'])) {
-                Tools::set_message('danger', lang('Core.not_{0}_exist', [$this->item]), lang('Core.warning_error'));
+                Tools::set_message('danger', lang('Core.not_{0}_exist', [$this->controller]), lang('Core.warning_error'));
                 return redirect()->to('/' . env('CI_SITE_AREA') . $this->pathcontroller);
             }
         }
@@ -107,7 +163,7 @@ class AdminProductController extends AdminController
 
         parent::renderForm($id);
         $this->data['edit_title'] = lang('Core.edit_product');
-        return view($this->get_current_theme_view('form', 'Adnduweb/Ci4_ecommerce'), $this->data);
+        return view($this->get_current_theme_view('form', $this->namespace), $this->data);
     }
 
     public function postProcessEdit($param)

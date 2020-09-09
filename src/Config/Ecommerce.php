@@ -6,6 +6,10 @@ use CodeIgniter\Config\BaseConfig;
 
 class Ecommerce extends BaseConfig
 {
+    //--------------------------------------------------------------------
+    //Url de l'admin
+    //--------------------------------------------------------------------
+    public $urlMenuAdmin = 'ecommerce';
 
     //--------------------------------------------------------------------
     // Délai des Nouveaux produits sur le front

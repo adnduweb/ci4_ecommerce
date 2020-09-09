@@ -92,7 +92,7 @@ class SupplierModel extends Model
         if (!empty($categoriesRow)) {
             $i = 0;
             foreach ($categoriesRow as $category) {
-                $categoriesRow[$i]->count_product = $this->changeItemIncat($category->{$this->primaryKey})->id;
+                $categoriesRow[$i]->count_product = $this->changeItemIncat($category->{$this->primaryKey})->currentRow ;
                 $LangueDisplay = [];
                 foreach (service('switchlanguage')->getArrayLanguesSupported() as $k => $v) {
                     $LangueDisplay[$k] = $this->getLanguesDispo($category->{$this->primaryKey}, $v);
@@ -130,7 +130,7 @@ class SupplierModel extends Model
     {
         $this->ec_products->selectCount($this->tableP . '.' . $this->primaryKeyP);
         $this->ec_products->where('deleted_at IS NULL AND '.$this->primaryKeyLang.' = ' . $id);
-        return $this->ec_products->get()->getRow();
+        return $this->ec_products->get();
     }
 
 

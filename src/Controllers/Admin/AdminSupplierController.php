@@ -17,11 +17,77 @@ use Adnduweb\Ci4_ecommerce\Models\supplierModel;
 class AdminSupplierController extends AdminController
 {
 
-    use \App\Traits\BuilderModelTrait;
-    use \App\Traits\ModuleTrait;
+    use \App\Traits\BuilderModelTrait, \App\Traits\ModuleTrait;
 
     /**
-     * @var \Adnduweb\Ci4_ecommerce\Models\CategoryModel
+     *  Module Object
+     */
+    public $module = true;
+
+    /**
+     * name controller
+     */
+    public $controller = 'supplier';
+
+    /**
+     * Localize slug
+     */
+    public $pathcontroller  = '/catalogue/supplier';
+
+    /**
+     * Localize namespace
+     */
+    public $namespace = 'Adnduweb/Ci4_ecommerce';
+
+    /**
+     * Id Module
+     */
+    protected $idModule;
+
+    /**
+     * Localize slug
+     */
+    public $dirList  = 'ecommerce';
+
+    /**
+     * Display default list column
+     */
+    public $fieldList = 'name';
+
+    /**
+     * Bouton add
+     */
+    public $add = true;
+
+    /**
+     * Display Multilangue
+     */
+    public $multilangue = true;
+
+    /**
+     * Event fake data
+     */
+    public $fake = false;
+
+    /**
+     * Update item List
+     */
+    public $toolbarUpdate = true;
+
+    /**
+     *  Bool Export
+     */
+    public$toolbarExport   = false;
+
+
+    /**
+     * Change Categorie
+     */
+    public $changeCategorie = true;
+
+
+    /**
+     * @var \Adnduweb\Ci4_ecommerce\Models\SupplierModel
      */
     public $tableModel;
 
@@ -30,22 +96,8 @@ class AdminSupplierController extends AdminController
      */
     private $product_model;
 
-    protected $idModule;
-
-    public $module          = true;
-    public $name_module     = 'ecommerce';
-    public $controller      = 'ecommerce';
-    public $item            = 'ecommerce';
-    public $type            = 'Adnduweb/Ci4_ecommerce';
-    public $pathcontroller  = '/ecommerce/catalogue/supplier';
-    public $fieldList       = 'name';
-    public $add             = true;
-    public $multilangue     = true;
-    public $toolbarUpdate   = true;
-    public $changeCategorie = true;
-
     /**
-     * Article constructor.
+     * Fournisseur constructor.
      *
      * @throws \CodeIgniter\Database\Exceptions\DatabaseException
      */
@@ -54,31 +106,35 @@ class AdminSupplierController extends AdminController
         parent::__construct();
         $this->tableModel     = new SupplierModel();
         $this->product_model = new ProductModel();
-        $this->module         = "ecommerce";
         $this->idModule       = $this->getIdModule();
+
+        $this->data['paramJs']['baseSegmentAdmin'] = config('Ecommerce')->urlMenuAdmin;
+        $this->pathcontroller  = '/' . config('Ecommerce')->urlMenuAdmin . $this->pathcontroller;
+
     }
 
 
     public function renderViewList()
     {
-        AssetsBO::add_js([$this->get_current_theme_view('controllers/' . $this->controller . '/js/listSupplier.js', 'default')]);
+        AssetsBO::add_js([$this->get_current_theme_view('controllers/' . $this->dirList . '/js/listSupplier.js', 'default')]);
         helper('form');
 
         if (!has_permission(ucfirst($this->controller) . '::views', user()->id)) {
             Tools::set_message('danger', lang('Core.not_acces_permission'), lang('Core.warning_error'));
             return redirect()->to('/' . CI_SITE_AREA . '/dashboard');
         }
-        $this->data['nameController'] = lang('Core.' . $this->controller);
+        $this->data['nameController']    = lang('Core.' . $this->controller);
         $this->data['addPathController'] = $this->pathcontroller . '/add';
-        $this->data['toolbarUpdate'] = $this->toolbarUpdate;
-        $this->data['changeCategorie'] = $this->changeCategorie;
-        $this->data['fakedata'] = $this->fake;
+        $this->data['toolbarUpdate']     = $this->toolbarUpdate;
+        $this->data['changeCategorie']   = $this->changeCategorie;
+        $this->data['fakedata']          = $this->fake;
+        $this->data['toolbarExport']     = $this->toolbarExport;
         if (isset($this->add) && $this->add == true)
-            $this->data['add'] = lang('Core.add_' . $this->item);
+            $this->data['add'] = lang('Core.add_' . $this->controller);
         $this->data['countList'] = $this->tableModel->getAllCount(['field' => $this->fieldList, 'sort' => 'ASC'], []);
         $this->data['categories'] = $this->tableModel->getAllCategoriesOptionParent();
 
-        return view($this->get_current_theme_view('supplier/index', $this->type), $this->data);
+        return view($this->get_current_theme_view('supplier/index', $this->namespace), $this->data);
     }
 
 
@@ -95,7 +151,7 @@ class AdminSupplierController extends AdminController
         } else {
             $this->data['form'] = $this->tableModel->where('id', $id)->first();
             if (empty($this->data['form'])) {
-                Tools::set_message('danger', lang('Core.not_{0}_exist', [$this->item]), lang('Core.warning_error'));
+                Tools::set_message('danger', lang('Core.not_{0}_exist', [$this->controller]), lang('Core.warning_error'));
                 return redirect()->to('/' . env('CI_SITE_AREA') . '/public/blog/categories');
             }
         }
@@ -105,7 +161,7 @@ class AdminSupplierController extends AdminController
 
         parent::renderForm($id);
         $this->data['edit_title'] = lang('Core.edit_categorie');
-        return view($this->get_current_theme_view('supplier/form', 'Adnduweb/Ci4_ecommerce'), $this->data);
+        return view($this->get_current_theme_view('supplier/form', $this->namespace), $this->data);
     }
 
     public function postProcessEdit($param)
@@ -136,6 +192,13 @@ class AdminSupplierController extends AdminController
 
     public function postProcessAdd($param)
     {
+
+        $this->validation->setRules(['lang.1.slug' => 'required']);
+        if (!$this->validation->run($this->request->getPost())) {
+            Tools::set_message('danger', $this->validation->getErrors(), lang('Core.warning_error'));
+            return redirect()->back()->withInput();
+        }
+
         // Try to create the user
         $categorieBase = new supplier();
         $categorieBase->fill($this->request->getPost());
@@ -193,7 +256,7 @@ class AdminSupplierController extends AdminController
                     } else {
                         // On regarde si le groupe est déja affecté
                         //print_r($this->tableModel->changeItemIncat($id)); exit;
-                        if ($this->tableModel->changeItemIncat($id) == '0') {
+                        if ($this->tableModel->changeItemIncat($id)->currentRow == '0') {
                             $this->tableModel->delete($id);
                         } else {
                             return $this->respond(['status' => false, 'type' => 'warning', 'message' => lang('Js.not_action_because_item_cat')], 200);

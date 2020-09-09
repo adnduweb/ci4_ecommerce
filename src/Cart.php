@@ -487,4 +487,6 @@ namespace Adnduweb\Ci4_ecommerce {
 
         // ------------------------------------------------------------------------
     }
+
+    //https://github.com/agungsugiarto/codeigniter4-shoppingcart
 }
